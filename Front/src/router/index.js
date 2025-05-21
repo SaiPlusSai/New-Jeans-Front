@@ -4,6 +4,7 @@ import LoginView from '../views/LoginView.vue'
 import IngresarDocsView from '@/views/IngresarDocsView.vue'
 import VerDocumentosView from '@/views/VerDocumentosView.vue'
 import FavoritosView from '@/views/FavoritosView.vue'
+import ReportesView from '@/views/ReportesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/favs',
       name: 'favs',
       component: FavoritosView,
+    },
+    {
+      path: '/reportes',
+      name: 'reportes',
+      component: ReportesView,
     },
     {
       path: '/about',

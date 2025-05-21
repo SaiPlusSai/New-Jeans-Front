@@ -13,6 +13,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <v-btn text to="/docs" tag="RouterLink">Documentos</v-btn>
       <v-btn text to="/favs" tag="RouterLink">Favoritos</v-btn>
       <v-btn text to="/reportes" tag="RouterLink">Reportes</v-btn>
+      <v-btn text to="/propuestas" tag="RouterLink">Propuestas</v-btn>
     </v-app-bar>
     <v-main>
       <v-container class="py-8">

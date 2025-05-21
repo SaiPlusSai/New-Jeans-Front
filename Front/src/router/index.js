@@ -5,6 +5,7 @@ import IngresarDocsView from '@/views/IngresarDocsView.vue'
 import VerDocumentosView from '@/views/VerDocumentosView.vue'
 import FavoritosView from '@/views/FavoritosView.vue'
 import ReportesView from '@/views/ReportesView.vue'
+import PropuestasView from '@/views/PropuestasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +19,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/propuestas',
+      name: 'propuestas',
+      component: PropuestasView,
     },
     {
       path: '/TPS',

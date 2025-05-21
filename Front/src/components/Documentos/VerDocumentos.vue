@@ -69,8 +69,8 @@
     </v-row>
     <v-row>
         <v-col
-            v-for="(doc, index) in docs"
-            :key="index"
+            v-for="(doc) in docs"
+            :key="doc.codigo"
             cols="12"
         >
         <v-card outlined>
@@ -91,12 +91,26 @@
             <p v-if="doc.vigente === 1">Vigente</p>
             <p v-if="doc.vigente === 0">No está vigente</p>
           </v-card-text>
+          <v-card-actions>
+            <v-btn
+                v-if="isToken"
+                elevation="0"
+                icon
+                class="favorite-btn"
+                @click="toggleFavorite(doc.codigo)"
+                :aria-label="isFavorite(doc.codigo) ? 'Eiminar de Favoritos' : 'Añadir a Favoritos'"
+            >
+                <v-icon color="yellow">
+                {{ isFavorite(doc.codigo) ? 'mdi-star' : 'mdi-star-outline' }}
+                </v-icon>
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
     <v-row>
         <v-col>
-            <v-snackbar v-model="snackbar" color="red" timeout="3000">
+            <v-snackbar v-model="snackbar" timeout="3000">
                 {{ snackbarContent }}
             </v-snackbar>
         </v-col>
@@ -110,6 +124,8 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const docs = ref([]);
+const favs = ref([]);
+const isToken = ref(false);
 const snackbar = ref(false);
 const snackbarContent = ref('');
 const searchWord = ref('');
@@ -130,9 +146,11 @@ const fetchDocs = async () => {
 };
 
 const searchDocs = async () => {
-    clearFilters();
-
-    if(searchWord.value !== null){
+    selectedTipo.value = null;
+    searchFuente.value = null;
+    searchAnio.value = null;
+    
+    if(searchWord.value !== null && searchWord.value !== ''){
         searchWord.value = searchWord.value.trim();
         if(searchWord.value.split(/\s+/).length === 1){
             try {
@@ -220,8 +238,61 @@ const clearFilters = () => {
     fetchDocs();
 };
 
+const token = localStorage.getItem('token');
+console.log(token);
+
+const fetchFavs = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/favoritos', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    favs.value = response.data;
+  } catch (error) {
+    console.error('Error al obtener documentos favoritos:', error);
+  }
+};
+
+const isFavorite = (codigo) => {
+    return favs.value.some(doc => doc.codigo === codigo);
+};
+
+const toggleFavorite = async (codigo) => {
+    if(isFavorite(codigo)){
+        try {
+            const response = await axios.delete(`http://localhost:3000/api/favoritos/${codigo}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            snackbar.value = true;
+            snackbarContent.value = response.data.mensaje;
+        } catch (error) {
+            console.error('Error al eliminar de favoritos:', error);
+        }
+    } else {
+        try {
+            const response = await axios.post(`http://localhost:3000/api/favoritos/${codigo}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            snackbar.value = true;
+            snackbarContent.value = response.data.mensaje;
+        } catch (error) {
+            console.error('Error al añadir de favoritos:', error);
+        }
+    }
+    fetchFavs();
+};
+
 onMounted(() => {
     fetchDocs();
+    isToken.value = token != null;
+    if(isToken.value){
+        fetchFavs();
+    }
 });
 
 </script>

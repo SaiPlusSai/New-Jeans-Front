@@ -4,42 +4,33 @@
     <v-row justify="center">
         <h1>Reportes</h1>
     </v-row>
-    <v-row justify="left">
-        <v-col cols="6" sm="10">
-            <h2>Consultas</h2>
-        </v-col>
-        <v-col cols="6" sm="2">
-            <v-btn @click="consultasPDF" color="primary">
-                Descargar PDF
-            </v-btn>
-        </v-col>
+    <v-row>
+        <h2>Consultas</h2>
     </v-row>
     <v-row>
         <v-col
             v-for="(consulta, index) in consultas"
             :key="index"
             cols="6"
-            sm="12"
+            sm="4"
         >
-        <v-card plain>
+        <v-card flat>
           <v-card-title>Palabra: {{ consulta.palabra }}</v-card-title>
           <v-card-text>
-            <p v-if="consulta.buscado_donde === 'ambos'"> Relevancia y descripción </p>
-            <p v-if="consulta.buscado_donde != 'ambos'"> {{ consulta.buscado_donde }} </p>
+            <p v-if="consulta.buscado_donde === 'ambos'"> Buscado en: Relevancia y descripción </p>
+            <p v-if="consulta.buscado_donde != 'ambos'"> Buscado en: {{ consulta.buscado_donde }} </p>
             <p>Fecha: {{ consulta.buscado_en }}</p>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+    <v-row justify="end">
+        <v-btn @click="consultasPDF" color="primary" prepend-icon="mdi-download">
+            Descargar PDF
+        </v-btn>
+    </v-row>
     <v-row>
-        <v-col cols="6" sm="10">
-            <h2>Documentos vigentes</h2>
-        </v-col>
-        <v-col cols="6" sm="2">
-            <v-btn @click="docsPDF" color="primary">
-                Descargar PDF
-            </v-btn>
-        </v-col>
+        <h2>Documentos vigentes</h2>
     </v-row>
     <v-row>
         <v-btn @click="filterVisible = !filterVisible" color="primary" block>
@@ -108,6 +99,11 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row justify="end">
+        <v-btn @click="docsPDF" color="primary" prepend-icon="mdi-download">
+            Descargar PDF
+        </v-btn>
+    </v-row>
     <v-row>
         <v-col>
             <v-snackbar v-model="snackbar" timeout="3000">
@@ -131,6 +127,9 @@ const filterVisible = ref(false);
 const tipos = ref(['ley', 'decreto', 'resolucion', 'circular', 'reglamento', 'otro']);
 const selectedTipo = ref(null);
 const searchAnio = ref(null);
+const inputError = ref('');
+const tipoFilter = ref(false);
+const anioFilter = ref(false);
 
 const token = localStorage.getItem('token');
 console.log(token);
@@ -162,13 +161,13 @@ const fetchDocs = async () => {
 };
 
 const applyFilters = async () => {
-    if(selectedTipo != null && searchAnio != null){
+    if(selectedTipo.value != null && searchAnio.value != null){
         snackbar.value = true;
         snackbarContent.value = 'Solo puede aplicar un filtro a la vez.';
     } else {
-        if(selectedTipo != null){
+        if(selectedTipo.value != null){
             try {
-                const response = await axios.get(`http://localhost:3000/api/reportes/documentos/tipo/${selectedTipo}`, {
+                const response = await axios.get(`http://localhost:3000/api/reportes/documentos/tipo/${selectedTipo.value}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -177,16 +176,24 @@ const applyFilters = async () => {
             } catch (error) {
                 console.error('Error al obtener documentos por tipo:', error);
             }
-        } else if(searchAnio != null) {
-            try {
-                const response = await axios.get(`http://localhost:3000/api/reportes/documentos/anio/${searchAnio}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                docs.value = response.data;
-            } catch (error) {
-                console.error('Error al obtener documentos por año:', error);
+            tipoFilter.value = true;
+            anioFilter.value = false;
+        } else if(searchAnio.value != null) {
+            if(searchAnio.value < 2000 || searchAnio.value> 2024){
+                inputError.value = 'El año debe estar entre 2000 y 2024';
+            } else {
+                try {
+                    const response = await axios.get(`http://localhost:3000/api/reportes/documentos/anio/${searchAnio.value}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    docs.value = response.data;
+                } catch (error) {
+                    console.error('Error al obtener documentos por año:', error);
+                }
+                tipoFilter.value = false;
+                anioFilter.value = true;
             }
         }
     }
@@ -195,63 +202,111 @@ const applyFilters = async () => {
 const clearFilters = () => {
     selectedTipo.value = null;
     searchAnio.value = null;
+    tipoFilter.value = false;
+    anioFilter.value = false;
     fetchDocs();
 };
 
 const consultasPDF = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/reportes-pdf/consultas', {
+        const response = await axios.get('http://localhost:3000/api/reportes/pdf/consultas', {
             headers: {
                 Authorization: `Bearer ${token}`
-            }
+            },
+            responseType: 'blob'
         });
         snackbar.value = true;
-        snackbarContent.value = response.data;
+        snackbarContent.value = 'PDF creado y descargado correctamente.';
+
+        const pdfUrl = URL.createObjectURL(response.data);
+        window.open(pdfUrl, '_blank');
+        
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = 'reporte-consultas.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(pdfUrl);
     } catch (error) {
         console.error('Error al descargar PDF:', error);
     }
 };
 
 const docsPDF = async () => {
-    if((selectedTipo != null && searchAnio != null) || (selectedTipo == null && searchAnio == null)){
+    if(tipoFilter.value){
         try {
-            const response = await axios.get('http://localhost:3000/api/reportes-pdf/documentos', {
+            const response = await axios.get(`http://localhost:3000/api/reportes/pdf/documentos/tipo/${selectedTipo.value}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
-                }
+                },
+                responseType: 'blob'
             });
             snackbar.value = true;
-            snackbarContent.value = response.data;
+            snackbarContent.value = 'PDF creado y descargado correctamente.';
+
+            const pdfUrl = URL.createObjectURL(response.data);
+            window.open(pdfUrl, '_blank');
+
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'reporte-documentos.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(pdfUrl);
+        } catch (error) {
+            console.error('Error al descargar PDF:', error);
+        }
+    } else if(anioFilter.value){
+        try {
+            const response = await axios.get(`http://localhost:3000/api/reportes/pdf/documentos/anio/${searchAnio.value}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                responseType: 'blob'
+            });
+            snackbar.value = true;
+            snackbarContent.value = 'PDF creado y descargado correctamente.';
+
+            const pdfUrl = URL.createObjectURL(response.data);
+            window.open(pdfUrl, '_blank');
+
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'reporte-documentos.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(pdfUrl);
         } catch (error) {
             console.error('Error al descargar PDF:', error);
         }
     } else {
-        if(selectedTipo != null){
-            try {
-                const response = await axios.get(`http://localhost:3000/api/reportes-pdf/documentos/tipo/${selectedTipo}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                snackbar.value = true;
-                snackbarContent.value = response.data;
-            } catch (error) {
-                console.error('Error al descargar PDF:', error);
-            }
-        } else if(searchAnio != null){
-            try {
-                const response = await axios.get(`http://localhost:3000/api/reportes-pdf/documentos/${searchAnio}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                snackbar.value = true;
-                snackbarContent.value = response.data;
-            } catch (error) {
-                console.error('Error al descargar PDF:', error);
-            }
+        try {
+            const response = await axios.get('http://localhost:3000/api/reportes/pdf/documentos', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                responseType: 'blob'
+            });
+            snackbar.value = true;
+            snackbarContent.value = 'PDF creado y descargado correctamente.';
+
+            const pdfUrl = URL.createObjectURL(response.data);
+            window.open(pdfUrl, '_blank');
+
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'reporte-documentos.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(pdfUrl);
+        } catch (error) {
+            console.error('Error al descargar PDF:', error);
         }
-    }
+    } 
 };
 
 onMounted(() => {

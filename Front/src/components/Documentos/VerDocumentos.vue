@@ -296,3 +296,126 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+/* Tipografía animada */
+h1 {
+  font-family: 'Caviar Dreams', sans-serif;
+  font-size: 2rem;
+  color: #B48EAE;
+  text-align: center;
+  margin-bottom: 1rem;
+  animation: fadeInText 1s ease-in-out;
+}
+
+/* Animación para el texto */
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botones con estilo pastel y animaciones */
+.v-btn {
+  font-weight: bold;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  animation: fadeInBtn 0.6s ease;
+}
+
+.v-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 12px rgba(150, 130, 160, 0.25);
+}
+
+/* Animación de entrada de botones */
+@keyframes fadeInBtn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Colores pastel */
+.v-btn.primary {
+  background-color: #F0D9EF !important;
+  color: #5D4C63 !important;
+}
+
+.v-btn.red {
+  background-color: #FCDCE1 !important;
+  color: #6A3D4F !important;
+}
+
+/* Tarjetas con fondo pastel */
+.v-card {
+  background-color: #FFF8F0 !important;
+  border: 1px solid #FCE4EC;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(240, 217, 239, 0.4);
+  margin-bottom: 1rem;
+  animation: fadeInCard 0.8s ease;
+}
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Títulos y subtítulos */
+.v-card-title {
+  color: #8D6E97;
+  font-family: 'Caviar Dreams', sans-serif;
+}
+
+.v-card-subtitle {
+  color: #A188A6;
+}
+
+/* Inputs */
+.v-text-field input {
+  background-color: #FAF0F5 !important;
+  color: #5D4C63 !important;
+}
+
+.v-text-field label {
+  color: #A188A6 !important;
+}
+
+.v-select,
+.v-text-field {
+  border-radius: 8px;
+}
+
+/* Snackbar pastel */
+.v-snackbar {
+  background-color: #FFE6BB !important;
+  color: #5C4738 !important;
+}
+
+/* Ícono de favoritos */
+.favorite-btn .v-icon {
+  font-size: 24px;
+  transition: transform 0.2s;
+}
+
+.favorite-btn .v-icon:hover {
+  transform: scale(1.3);
+}
+
+</style>

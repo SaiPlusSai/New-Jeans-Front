@@ -48,6 +48,7 @@ const obtenerPerfil = async (token) => {
 }
 
 const logout = () => {
+  location.reload()
   localStorage.removeItem('token')
   usuarioPerfil.value = null
   correo.value = ''
@@ -124,18 +125,11 @@ onMounted(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
 
-@keyframes softBackground {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 .login-container {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(120deg, #fcd5ce, #f9dcc4, #e0f7fa, #e1eecb);
   background-size: 500% 500%;
   animation: softBackground 18s ease infinite;
 }

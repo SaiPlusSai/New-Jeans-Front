@@ -53,6 +53,13 @@ isLoggedIn.value = localStorage.getItem("token") !== null
 </template>
 
 <style scoped>
+
+@keyframes softBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .custom-navbar {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -90,7 +97,7 @@ isLoggedIn.value = localStorage.getItem("token") !== null
 }
 
 .main-background {
-  background: linear-gradient(to bottom right, #ffffff, #e0f7fa);
+  background: linear-gradient(120deg, #fcd5ce, #f9dcc4, #e0f7fa, #e1eecb);
   min-height: 100vh;
 }
 

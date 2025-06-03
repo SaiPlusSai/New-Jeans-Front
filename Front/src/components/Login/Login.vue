@@ -23,6 +23,7 @@ const login = async () => {
     await obtenerPerfil(token)
 
     showSnackbar.value = true
+    location.reload() // 🔄 Refresca la página para actualizar el estado visible
   } catch (err) {
     if (err.response?.status === 401) {
       error.value = 'Credenciales inválidas'

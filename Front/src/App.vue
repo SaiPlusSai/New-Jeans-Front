@@ -1,5 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { ref } from 'vue'
+
+// Supón que esta variable la controlas en login/logout
+const isLoggedIn = ref(false)
+
+// Simula login para pruebas (elimínalo luego)
+isLoggedIn.value = localStorage.getItem("token") !== null
 </script>
 
 <template>
@@ -10,7 +17,12 @@ import { RouterLink, RouterView } from 'vue-router'
           <v-btn class="nav-button btn1" to="/" exact tag="RouterLink">
             <v-icon start>mdi-home</v-icon>Inicio
           </v-btn>
-          <v-btn class="nav-button btn2" to="/TPS" tag="RouterLink">
+          <v-btn
+            v-if="isLoggedIn"
+            class="nav-button btn2"
+            to="/TPS"
+            tag="RouterLink"
+          >
             <v-icon start>mdi-gavel</v-icon>Leyes
           </v-btn>
           <v-btn class="nav-button btn4" to="/docs" tag="RouterLink">

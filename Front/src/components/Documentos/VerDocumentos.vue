@@ -259,7 +259,7 @@ const isFavorite = (codigo) => {
 };
 
 const toggleFavorite = async (codigo) => {
-    if(isFavorite(codigo)){
+    if (isFavorite(codigo)) {
         try {
             const response = await axios.delete(`http://localhost:3000/api/favoritos/${codigo}`, {
                 headers: {
@@ -273,7 +273,7 @@ const toggleFavorite = async (codigo) => {
         }
     } else {
         try {
-            const response = await axios.post(`http://localhost:3000/api/favoritos/${codigo}`, {
+            const response = await axios.post(`http://localhost:3000/api/favoritos/${codigo}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -10,7 +10,7 @@
         <strong>{{ propuesta.titulo }}</strong> - Estado actual: <em>{{ propuesta.estado }}</em>
         <p>{{ propuesta.descripcion }}</p>
 
-        <label for="estado">Cambiar estado:</label>
+        <label for="estado">Cambiar estado: </label>
         <select v-model="propuesta.nuevoEstado">
           <option disabled value="">Seleccione estado</option>
           <option value="pendiente">Pendiente</option>
@@ -55,8 +55,7 @@ export default {
         const res = await axios.get('/api/propuestas', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log('Perfil recibido:', perfilRes.data)
-
+        
         this.propuestas = res.data.map(p => ({
           ...p,
           nuevoEstado: p.estado
@@ -91,11 +90,11 @@ export default {
     async verificarRol() {
       const token = localStorage.getItem('token');
       try {
-        const res = await axios.get('/api/auth/perfil', {
+        const res = await axios.get('/api/usuarios/perfil', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
-        if (res.data.rol === 'MIGA') {
+
+        if (res.data.usuario.rol === 'MIGA') {
           this.esMIGA = true; // Si el rol es MIGA, habilitamos la vista
           this.cargarPropuestas(); // Cargamos las propuestas solo si el rol es MIGA
         } else {

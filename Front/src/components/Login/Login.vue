@@ -1,13 +1,14 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
+const showPassword = ref(false);
 const correo = ref('')
 const contraseña = ref('')
 const error = ref('')
 const loading = ref(false)
 const showSnackbar = ref(false)
-const usuarioPerfil = ref(null)
 
 const login = async () => {
   error.value = ''
@@ -20,46 +21,27 @@ const login = async () => {
 
     const token = res.data.token
     localStorage.setItem('token', token)
-    await obtenerPerfil(token)
 
     showSnackbar.value = true
-    location.reload() // 🔄 Refresca la página para actualizar el estado visible
+    setTimeout(() => {
+      location.reload()
+    }, 1000)
   } catch (err) {
-    if (err.response?.status === 401) {
+    if (err.response.status === 401) {
       error.value = 'Credenciales inválidas'
     } else {
       error.value = 'Error del servidor'
     }
   } finally {
-    loading.value = false
+    loading.value = false 
   }
 }
 
-const obtenerPerfil = async (token) => {
-  try {
-    const perfilRes = await axios.get('http://localhost:3000/api/usuarios/perfil', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    usuarioPerfil.value = perfilRes.data
-    console.log('Perfil cargado automáticamente:', perfilRes.data)
-  } catch (err) {
-    localStorage.removeItem('token') // Si el token es inválido, lo borramos
-  }
-}
-
-const logout = () => {
-  location.reload()
-  localStorage.removeItem('token')
-  usuarioPerfil.value = null
-  correo.value = ''
-  contraseña.value = ''
-}
-
-// Al cargar el componente, verificamos si ya hay un token
 onMounted(() => {
   const token = localStorage.getItem('token')
   if (token) {
-    obtenerPerfil(token)
+    const router = useRouter()
+    router.push('/')
   }
 })
 </script>
@@ -67,48 +49,37 @@ onMounted(() => {
 <template>
   <v-container class="login-container">
     <v-card class="login-card">
-      <template v-if="!usuarioPerfil">
-        <v-card-title class="login-title">Iniciar Sesión</v-card-title>
-        <v-form @submit.prevent="login">
-          <v-text-field
-            v-model="correo"
-            label="Correo electrónico"
-            type="email"
-            :rules="[v => !!v || 'Requerido']"
-            class="login-input"
-            variant="outlined"
-          />
-          <v-text-field
-            v-model="contraseña"
-            label="Contraseña"
-            type="password"
-            :rules="[v => !!v || 'Requerido']"
-            class="login-input"
-            variant="outlined"
-          />
-          <v-btn
-            type="submit"
-            class="login-btn"
-            :loading="loading"
-            block
-            rounded
-          >
-            Entrar
-          </v-btn>
-          <p v-if="error" class="error-text">{{ error }}</p>
-        </v-form>
-      </template>
-
-      <template v-else>
-        <v-card-title class="login-title">Bienvenido, {{ usuarioPerfil.nombre }}</v-card-title>
-        <v-card-text>
-          <p><strong>Correo:</strong> {{ usuarioPerfil.correo }}</p>
-          <p><strong>Rol:</strong> {{ usuarioPerfil.rol || 'Usuario' }}</p>
-        </v-card-text>
-        <v-btn class="login-btn" color="error" @click="logout" block rounded>
-          Cerrar sesión
+      <v-card-title class="login-title">Iniciar Sesión</v-card-title>
+      <v-form @submit.prevent="login">
+        <v-text-field
+          v-model="correo"
+          label="Correo electrónico"
+          type="email"
+          :rules="[v => !!v || 'Este campo no puede estar vacío.']"
+          class="login-input"
+          variant="outlined"
+        />
+        <v-text-field
+          v-model="contraseña"
+          label="Contraseña"
+          :type="showPassword ? 'text' : 'password'"
+          :rules="[v => !!v || 'Este campo no puede estar vacío.']"
+          class="login-input"
+          variant="outlined"
+          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showPassword = !showPassword"
+        />
+        <v-btn
+          type="submit"
+          class="login-btn"
+          :loading="loading"
+          block
+          rounded
+        >
+          Entrar
         </v-btn>
-      </template>
+        <p v-if="error" class="error-text">{{ error }}</p>
+      </v-form>
     </v-card>
 
     <v-snackbar

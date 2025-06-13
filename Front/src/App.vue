@@ -1,24 +1,58 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { ref } from 'vue'
+  import { RouterLink, RouterView } from 'vue-router'
+  import { ref, onMounted } from 'vue'
+  import axios from 'axios'
 
-// Supón que esta variable la controlas en login/logout
-const isLoggedIn = ref(false)
+  var drawer = ref(false);
 
-// Simula login para pruebas (elimínalo luego)
-isLoggedIn.value = localStorage.getItem("token") !== null
+  var isLogged = ref(false);
+  var isMiga = ref(false);
+  var isCommunity = ref(false);
+
+  const verificarRol = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await axios.get('/api/usuarios/perfil', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      isLogged.value = true;
+
+      if (res.data.usuario.rol === 'MIGA') {
+        isMiga.value = true; 
+      } else if (res.data.usuario.rol === 'COMUNIDAD'){
+        isCommunity.value = true; 
+      }
+    } catch (err) {
+      console.error('No se pudo verificar el rol del usuario: ', err);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    isLogged.value = false;
+    isMiga.value = false;
+    isCommunity.value = false;
+  }
+
+  onMounted(() => {
+    if(localStorage.getItem('token') !== null){
+      verificarRol();
+    }
+  });
 </script>
 
 <template>
   <v-app>
     <v-app-bar app class="custom-navbar" flat>
-      <v-row justify="center" align="center" no-gutters class="w-100">
+      <v-app-bar-nav-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
+      <v-row justify="center" align="center" no-gutters class="w-100 hidden-sm-and-down">
         <v-col cols="auto">
           <v-btn class="nav-button btn1" to="/" exact tag="RouterLink">
             <v-icon start>mdi-home</v-icon>Inicio
           </v-btn>
           <v-btn
-            v-if="isLoggedIn"
+            v-if="isMiga"
             class="nav-button btn2"
             to="/TPS"
             tag="RouterLink"
@@ -28,21 +62,65 @@ isLoggedIn.value = localStorage.getItem("token") !== null
           <v-btn class="nav-button btn4" to="/docs" tag="RouterLink">
             <v-icon start>mdi-file-document</v-icon>Documentos
           </v-btn>
-          <v-btn class="nav-button btn5" to="/favs" tag="RouterLink">
+          <v-btn v-if="isLogged" class="nav-button btn5" to="/favs" tag="RouterLink">
             <v-icon start>mdi-heart</v-icon>Favoritos
           </v-btn>
-          <v-btn class="nav-button btn6" to="/reportes" tag="RouterLink">
+          <v-btn v-if="isMiga" class="nav-button btn6" to="/reportes" tag="RouterLink">
             <v-icon start>mdi-chart-bar</v-icon>Reportes
           </v-btn>
-          <v-btn class="nav-button btn7" to="/propuestas" tag="RouterLink">
+          <v-btn v-if="isLogged" class="nav-button btn7" to="/propuestas" tag="RouterLink">
             <v-icon start>mdi-lightbulb-on</v-icon>Propuestas
           </v-btn>
-          <v-btn class="nav-button btn3" to="/login" tag="RouterLink">
+          <v-btn v-if="!isLogged" class="nav-button btn3" to="/login" tag="RouterLink">
             <v-icon start>mdi-login</v-icon>Login
+          </v-btn>
+          <v-btn v-if="isLogged" class="nav-button btn8" @click="logout()" to="/" tag="RouterLink">
+            <v-icon start>mdi-login</v-icon>Cerrar sesión
           </v-btn>
         </v-col>
       </v-row>
     </v-app-bar>
+
+    <v-navigation-drawer
+      v-model="drawer"
+      temporary
+      app
+      class="hidden-md-and-up"
+    >
+      <v-list nav dense>
+        <v-list-item to="/" exact>
+          <v-list-item-title>Inicio</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="isMiga" to="/TPS">
+          <v-list-item-title>Leyes</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item to="/docs">
+          <v-list-item-title>Documentos</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="isLogged" to="/favs">
+          <v-list-item-title>Favoritos</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="isMiga" to="/reportes">
+          <v-list-item-title>Reportes</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="isLogged" to="/propuestas">
+          <v-list-item-title>Propuestas</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="!isLogged" to="/login">
+          <v-list-item-title>Login</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="isLogged" to="/login">
+          <v-list-item-title>Cerrar sesión</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
     <v-main class="main-background">
       <v-container class="fade-in">
@@ -89,6 +167,7 @@ isLoggedIn.value = localStorage.getItem("token") !== null
 .btn5 { background-image: linear-gradient(135deg, #fbc2eb, #a6c1ee); }
 .btn6 { background-image: linear-gradient(135deg, #fad0c4, #ffd1ff); }
 .btn7 { background-image: linear-gradient(135deg, #c1dfc4, #deecdd); }
+.btn8 { background-image: linear-gradient(135deg, #F8A0AA, #FEECEE); }
 
 .nav-button:hover {
   background-position: right center;

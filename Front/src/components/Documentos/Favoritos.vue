@@ -5,6 +5,7 @@
             <h1>Documentos MIGA Favoritos</h1>
     </v-row>
     <v-row>
+      <div v-if="isFavsNull">No tienes documentos favoritos.</div>
         <v-col
             v-for="(doc) in docs"
             :key="doc.codigo"
@@ -63,6 +64,7 @@ const docs = ref([]);
 const snackbar = ref(false);
 const snackbarContent = ref('');
 const token = localStorage.getItem('token');
+var isFavsNull = ref(false);
 console.log(token);
 
 const fetchFavs = async () => {
@@ -72,6 +74,10 @@ const fetchFavs = async () => {
         Authorization: `Bearer ${token}`
         }
     });
+    
+    if(response.data.length === 0){
+      isFavsNull.value = true;
+    }
     docs.value = response.data;
   } catch (error) {
     console.error('Error al obtener documentos:', error);

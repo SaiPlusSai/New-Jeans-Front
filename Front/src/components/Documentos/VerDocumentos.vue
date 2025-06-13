@@ -402,11 +402,11 @@ h1 {
   border-radius: 8px;
 }
 
-/* Snackbar pastel */
+/* Snackbar pastel
 .v-snackbar {
   background-color: #FFE6BB !important;
   color: #5C4738 !important;
-}
+}*/
 
 /* Ícono de favoritos */
 .favorite-btn .v-icon {

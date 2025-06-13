@@ -106,7 +106,7 @@ const mensaje = ref('');
 const error = ref('');
 const cargando = ref(false);
 const esMIGA = ref(false);
-const esComunidad = ref(falseref);
+const esComunidad = ref(false);
 const dialog = ref(false);
 
 const cargarPropuestas = async () => {

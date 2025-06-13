@@ -3,20 +3,20 @@
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
 
-  var drawer = ref(false);
+  const drawer = ref(false);
 
-  var isLogged = ref(false);
-  var isMiga = ref(false);
-  var isCommunity = ref(false);
+  const isLogged = ref(false);
+  const isMiga = ref(false);
+  const isCommunity = ref(false);
 
   const verificarRol = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.get('/api/usuarios/perfil', {
+      isLogged.value = true;
+
+      const res = await axios.get('http://localhost:3000/api/usuarios/perfil', {
         headers: { Authorization: `Bearer ${token}` }
       });
-
-      isLogged.value = true;
 
       if (res.data.usuario.rol === 'MIGA') {
         isMiga.value = true; 
@@ -68,8 +68,11 @@
           <v-btn v-if="isMiga" class="nav-button btn6" to="/reportes" tag="RouterLink">
             <v-icon start>mdi-chart-bar</v-icon>Reportes
           </v-btn>
-          <v-btn v-if="isLogged" class="nav-button btn7" to="/propuestas" tag="RouterLink">
+          <v-btn v-if="isMiga" class="nav-button btn7" to="/propuestas" tag="RouterLink">
             <v-icon start>mdi-lightbulb-on</v-icon>Propuestas
+          </v-btn>
+          <v-btn v-else-if="isCommunity" class="nav-button btn7" to="/propuestas" tag="RouterLink">
+            <v-icon start>mdi-lightbulb-on</v-icon>Mis propuestas
           </v-btn>
           <v-btn v-if="!isLogged" class="nav-button btn3" to="/login" tag="RouterLink">
             <v-icon start>mdi-login</v-icon>Login
@@ -108,15 +111,18 @@
           <v-list-item-title>Reportes</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="isLogged" to="/propuestas">
+        <v-list-item v-if="isMiga" to="/propuestas">
           <v-list-item-title>Propuestas</v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="isCommunity" to="/propuestas">
+          <v-list-item-title>Mis propuestas</v-list-item-title>
         </v-list-item>
 
         <v-list-item v-if="!isLogged" to="/login">
           <v-list-item-title>Login</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="isLogged" to="/login">
+        <v-list-item v-if="isLogged" @click="logout()" to="/">
           <v-list-item-title>Cerrar sesión</v-list-item-title>
         </v-list-item>
       </v-list>

@@ -7,9 +7,9 @@
     <v-row>
       <div v-if="isFavsNull">No tienes documentos favoritos.</div>
         <v-col
-            v-for="(doc) in docs"
-            :key="doc.codigo"
-            cols="12"
+          v-for="(doc) in docs"
+          :key="doc.codigo"
+          cols="12"
         >
         <v-card outlined>
           <v-card-title>{{ doc.descripcion }}</v-card-title>

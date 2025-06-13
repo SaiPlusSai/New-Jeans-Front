@@ -3,6 +3,7 @@
     <v-row>
       <h2 v-if="esMIGA">Gestión de Propuestas (MIGA)</h2>
       <h2 v-if="esComunidad">Mis Propuestas</h2>
+      <h2 v-if="notLogged">Propuestas</h2>
     </v-row>
 
     <v-row>
@@ -34,8 +35,6 @@
       </v-card>
       </v-col>
 
-      <div v-if="mensaje" class="mensaje">{{ mensaje }}</div>
-      <div v-if="error" class="error">{{ error }}</div>
     </v-row>
 
     <v-row>
@@ -55,14 +54,14 @@
           
           <v-card-text>
             <v-text-field
-              v-model="title"
+              v-model="propuesta.titulo"
               label="Título"
               :rules="[v => !!v || 'Este campo no puede estar vacío']"
               required
             ></v-text-field>
             
             <v-textarea
-              v-model="description"
+              v-model="propuesta.descripcion"
               label="Descripción"
               rows="3"
             ></v-textarea>
@@ -82,13 +81,19 @@
               color="primary"
               variant="tonal"
               @click="enviarPropuesta"
-              :disabled="!title"
+              :disabled="!propuesta.titulo"
             >
               Enviar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+    </v-row>
+
+    <v-row>
+      <v-snackbar v-model="snackbar" timeout="3000">
+        {{ snackbarContent }}
+      </v-snackbar>
     </v-row>
 
   </v-container>
@@ -102,19 +107,26 @@ import axios from 'axios'
 axios.defaults.baseURL = 'http://localhost:3000'; // Ajusta si tu backend está en otro host
 
 const propuestas = ref([]);
-const mensaje = ref('');
-const error = ref('');
 const cargando = ref(false);
 const esMIGA = ref(false);
 const esComunidad = ref(false);
+const notLogged = ref(false);
 const dialog = ref(false);
+const propuesta = ref({
+  titulo: '',
+  descripcion: '',
+});
+const snackbar = ref(false);
+const snackbarContent = ref('');
 
 const cargarPropuestas = async () => {
   cargando.value = true;
   try {
     const token = localStorage.getItem('token');
     var res;
-    if(esMIGA.value){
+    if(notLogged.value){
+      res = await axios.get('/api/propuestas/publicas');
+    } else if(esMIGA.value){
       res = await axios.get('/api/propuestas', {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -128,11 +140,10 @@ const cargarPropuestas = async () => {
       ...p,
       nuevoEstado: p.estado
     }));
-
-    error.value = '';
   } catch (err) {
     console.log(err);
-    error.value = err.response?.data?.message || 'Error al cargar propuestas.';
+    snackbar.value = true;
+    snackbarContent.value = err.response?.data?.message || 'Error al cargar propuestas.';
   } finally {
     cargando.value = false;
   }
@@ -147,17 +158,29 @@ const actualizarEstado = async (propuesta) => {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    mensaje.value = `Estado de la propuesta "${propuesta.titulo}" actualizado a "${propuesta.nuevoEstado}".`;
-    error.value = '';
+    snackbar.value = true;
+    snackbarContent.value = `Estado de la propuesta "${propuesta.titulo}" actualizado a "${propuesta.nuevoEstado}".`;
     cargarPropuestas(); // refrescar después del cambio
   } catch (err) {
-    error.value = err.response?.data?.message || 'Error al actualizar estado.';
-    mensaje.value = '';
+    snackbar.value = true;
+    snackbarContent.value = err.response?.data?.message || 'Error al actualizar estado.';
   }
 };
 
 const enviarPropuesta = async () => {
-  
+  try {
+    const token = localStorage.getItem('token');
+    await axios.post('/api/propuestas', propuesta.value, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    snackbar.value = true
+    snackbarContent.value = 'Propuesta enviada correctamente';
+  } catch (err) {
+    snackbar.value = true;
+    snackbarContent.value = err.response?.data?.message || 'Error al enviar propuesta.';
+  }
+   dialog.value = false;
+  cargarPropuestas();
 }
 
 const verificarRol = async () => {
@@ -174,15 +197,16 @@ const verificarRol = async () => {
     }
     cargarPropuestas(); 
   } catch (err) {
-    error.value = 'No se pudo verificar el rol del usuario.';
+    snackbar.value = true;
+    snackbarContent.value = 'No se pudo verificar el rol del usuario.';
   }
 };
 
 onMounted(() => {
-  const token = localStorage.getItem('token')
-  if (!token) {
-    const router = useRouter()
-    router.push('/')
+  const token = localStorage.getItem('token');
+  if(!token){
+    notLogged.value = true;
+    cargarPropuestas();
   } else {
     verificarRol();
   }

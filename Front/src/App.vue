@@ -68,7 +68,7 @@
           <v-btn v-if="isMiga" class="nav-button btn6" to="/reportes" tag="RouterLink">
             <v-icon start>mdi-chart-bar</v-icon>Reportes
           </v-btn>
-          <v-btn v-if="isMiga" class="nav-button btn7" to="/propuestas" tag="RouterLink">
+          <v-btn v-if="!isCommunity" class="nav-button btn7" to="/propuestas" tag="RouterLink">
             <v-icon start>mdi-lightbulb-on</v-icon>Propuestas
           </v-btn>
           <v-btn v-else-if="isCommunity" class="nav-button btn7" to="/propuestas" tag="RouterLink">
@@ -111,7 +111,7 @@
           <v-list-item-title>Reportes</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="isMiga" to="/propuestas">
+        <v-list-item v-if="!isCommunity" to="/propuestas">
           <v-list-item-title>Propuestas</v-list-item-title>
         </v-list-item>
         <v-list-item v-if="isCommunity" to="/propuestas">

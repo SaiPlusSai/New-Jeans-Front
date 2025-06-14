@@ -1,0 +1,54 @@
+.
+|-- Front
+|   |-- README.md
+|   |-- index.html
+|   |-- jsconfig.json
+|   |-- package-lock.json
+|   |-- package.json
+|   |-- public
+|   |   `-- favicon.ico
+|   |-- src
+|   |   |-- App.vue
+|   |   |-- assets
+|   |   |   |-- base.css
+|   |   |   |-- logo.svg
+|   |   |   `-- main.css
+|   |   |-- components
+|   |   |   |-- Documentos
+|   |   |   |   |-- Favoritos.vue
+|   |   |   |   |-- IngresarDocumentos.vue
+|   |   |   |   |-- Management.vue
+|   |   |   |   `-- VerDocumentos.vue
+|   |   |   |-- HelloWorld.vue
+|   |   |   |-- Login
+|   |   |   |   `-- Login.vue
+|   |   |   |-- PropuestasCiudadanas.vue
+|   |   |   |-- Reportes.vue
+|   |   |   |-- TheWelcome.vue
+|   |   |   |-- WelcomeItem.vue
+|   |   |   `-- icons
+|   |   |       |-- IconCommunity.vue
+|   |   |       |-- IconDocumentation.vue
+|   |   |       |-- IconEcosystem.vue
+|   |   |       |-- IconSupport.vue
+|   |   |       `-- IconTooling.vue
+|   |   |-- main.js
+|   |   |-- router
+|   |   |   `-- index.js
+|   |   |-- stores
+|   |   |   `-- counter.js
+|   |   `-- views
+|   |       |-- AboutView.vue
+|   |       |-- FavoritosView.vue
+|   |       |-- HomeView.vue
+|   |       |-- IngresarDocsView.vue
+|   |       |-- LoginView.vue
+|   |       |-- PropuestasView.vue
+|   |       |-- ReportesView.vue
+|   |       `-- VerDocumentosView.vue
+|   `-- vite.config.js
+|-- README.md
+|-- estructura.txt
+`-- package-lock.json
+
+11 directories, 40 files

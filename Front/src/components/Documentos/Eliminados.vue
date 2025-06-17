@@ -78,39 +78,85 @@ export default {
     await this.cargarDocumentosEliminados();
   },
   methods: {
-    async cargarDocumentosEliminados() {
-      try {
-        this.loading = true;
-        // Asumo que la API puede filtrar documentos no vigentes (eliminados lógicamente)
-        const response = await fetch('http://localhost:3000/api/documentos?vigente=0');
-        if (!response.ok) throw new Error('Error al cargar documentos');
-        
-        this.documentos = await response.json();
-        this.error = null;
-      } catch (err) {
-        this.error = err.message;
-        console.error('Error:', err);
-      } finally {
-        this.loading = false;
+     async cargarDocumentosEliminados() {
+    try {
+      this.loading = true;
+      
+      // Obtener el token guardado (ajusta según tu implementación)
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      const response = await fetch('http://localhost:3000/api/documentos/eliminados', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Error al cargar documentos eliminados');
       }
-    },
+      
+      this.documentos = await response.json();
+      this.error = null;
+    } catch (err) {
+      this.error = err.message;
+      console.error('Error al cargar documentos:', err);
+      
+      // Manejo opcional para token inválido/vencido
+      if (err.message.includes('401') || err.message.includes('403')) {
+        // Redirigir a login o renovar token
+        this.$router.push('/login');
+      }
+    } finally {
+      this.loading = false;
+    }
+  },
     
-    async restaurarDocumento(codigo) {
-      try {
-        const response = await fetch(`/api/documentos/${codigo}/restaurar`, {
-          method: 'PATCH'
-        });
-        
-        if (!response.ok) throw new Error('Error al restaurar documento');
-        
-        // Recargar la lista después de restaurar
-        await this.cargarDocumentosEliminados();
-        alert('Documento restaurado exitosamente');
-      } catch (err) {
-        alert(err.message);
-        console.error('Error:', err);
+      async restaurarDocumento(codigo) {
+    try {
+      // Obtener el token de donde lo tengas almacenado
+      console.log(codigo)
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      const response = await fetch(`http://localhost:3000/api/documentos/${codigo}/restaurar`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Error al restaurar documento');
       }
-    },
+
+      // Recargar la lista y mostrar notificación
+      await this.cargarDocumentosEliminados();
+      
+      // Usando una notificación más elegante que alert()
+      this.$notify({
+        title: 'Éxito',
+        message: 'Documento restaurado correctamente',
+        type: 'success'
+      });
+      
+    } catch (err) {
+      console.error('Error al restaurar documento:', err);
+      
+      // Notificación de error
+      this.$notify.error({
+        title: 'Error',
+        message: err.message || 'No se pudo restaurar el documento'
+      });
+
+      // Manejo específico para token inválido
+      if (err.message.includes('401') || err.message.includes('403')) {
+        this.$router.push('/login'); // Redirigir a login si es necesario
+      }
+    }
+  },
     
     mostrarDetalles(documento) {
       this.documentoSeleccionado = documento;

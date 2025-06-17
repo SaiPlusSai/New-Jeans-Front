@@ -2,28 +2,30 @@
 import Eliminados from '../Documentos/Eliminados.vue'
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const token = localStorage.getItem('token')
 
 // Refs y variables
-const token = localStorage.getItem('token')
 const usuario = ref(null)
 const rol = ref(null)
 const aplicaciones = ref([])
 const usuarios = ref([])
 
 const documento = ref({
-  codigo: '',
   tipo: '',
   fuente: '',
   descripcion: '',
   relevancia: '',
-  anio: '',
+  anio: new Date().getFullYear(),
   enlace: '',
   aplicacion_id: null,
   conceptos_cpe: '',
   creado_por: null,
   jerarquia: null,
-  vigente: false,
-  aplicacion: ''
+  vigente: true,
+  aplicacion: 'Nacional'
 })
 
 const snackbar = ref(false)
@@ -35,6 +37,7 @@ const documentoEliminado = ref(false)
 const searchWord = ref('')
 const docs = ref([])
 const showEliminados = ref(false)
+
 const tiposDocumento = [
   'Ley',
   'Decreto Supremo',
@@ -76,7 +79,7 @@ const cargarDatosIniciales = async () => {
   }
 }
 
-// Cargar perfil automáticamente si hay token
+// Cargar perfil
 const obtenerPerfil = async () => {
   if (!token) return
   try {
@@ -113,22 +116,19 @@ const buscarDocumentos = async () => {
 }
 
 const buscarPorCodigo = async () => {
-  if (!documento.value.codigo) return
+  if (!searchWord.value) return
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.get(`http://localhost:3000/api/documentos/${documento.value.codigo}`)
+    const res = await axios.get(`http://localhost:3000/api/documentos/${searchWord.value}`)
     Object.assign(documento.value, res.data)
-    documento.value.vigente = res.data.vigente === 1 || res.data.vigente === true
     editando.value = true
     documentoEliminado.value = res.data.eliminado || false
   } catch (err) {
     if (err.response?.status === 404) {
-      // Intenta buscar en eliminados si no se encuentra
       try {
-        const res = await axios.get(`http://localhost:3000/api/documentos/${documento.value.codigo}?eliminado=true`)
+        const res = await axios.get(`http://localhost:3000/api/documentos/${searchWord.value}?eliminado=true`)
         Object.assign(documento.value, res.data)
-        documento.value.vigente = res.data.vigente === 1 || res.data.vigente === true
         editando.value = true
         documentoEliminado.value = true
       } catch (err2) {
@@ -146,7 +146,6 @@ const buscarPorCodigo = async () => {
 
 const seleccionarDocumento = (doc) => {
   Object.assign(documento.value, doc)
-  documento.value.vigente = doc.vigente === 1 || doc.vigente === true
   editando.value = true
   documentoEliminado.value = doc.eliminado || false
 }
@@ -156,14 +155,19 @@ const registrarDocumento = async () => {
   error.value = ''
   loading.value = true
   try {
-    await axios.post('http://localhost:3000/api/documentos', documento.value, {
+    const response = await axios.post('http://localhost:3000/api/documentos/auto', documento.value, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    mostrarSnackbar('Documento registrado con éxito')
-    resetForm()
+    
+    mostrarSnackbar(response.data.mensaje)
+    documento.value.codigo = response.data.codigo
+    editando.value = true
     buscarDocumentos()
   } catch (err) {
     manejarError(err)
+    if (err.response?.data?.detalles) {
+      error.value = err.response.data.detalles.join(', ')
+    }
   } finally {
     loading.value = false
   }
@@ -173,7 +177,6 @@ const actualizarDocumento = async () => {
   error.value = ''
   loading.value = true
   try {
-    // Creamos un objeto con solo los campos editables (excluyendo código y fuente)
     const datosActualizacion = {
       tipo: documento.value.tipo,
       descripcion: documento.value.descripcion,
@@ -229,10 +232,23 @@ const restaurarDocumento = async () => {
 
 // Helpers
 const resetForm = () => {
-  Object.keys(documento.value).forEach(k => documento.value[k] = typeof documento.value[k] === 'boolean' ? false : '')
-  if (usuario.value) documento.value.creado_por = usuario.value.id
+  documento.value = {
+    tipo: '',
+    fuente: '',
+    descripcion: '',
+    relevancia: '',
+    anio: new Date().getFullYear(),
+    enlace: '',
+    aplicacion_id: null,
+    conceptos_cpe: '',
+    creado_por: usuario.value?.id || null,
+    jerarquia: null,
+    vigente: true,
+    aplicacion: 'Nacional'
+  }
   editando.value = false
   documentoEliminado.value = false
+  searchWord.value = ''
 }
 
 const mostrarSnackbar = (mensaje) => {
@@ -243,6 +259,7 @@ const mostrarSnackbar = (mensaje) => {
 const manejarError = (err) => {
   if (err.response?.status === 401 || err.response?.status === 403) {
     error.value = 'No tienes permisos para esta acción'
+    router.push('/login')
   } else if (err.response?.status === 400) {
     error.value = err.response.data.message || 'Datos inválidos'
   } else if (err.response?.status === 404) {
@@ -250,6 +267,7 @@ const manejarError = (err) => {
   } else {
     error.value = 'Error en el servidor'
   }
+  console.error('Error:', err.response?.data || err.message)
 }
 </script>
 
@@ -261,6 +279,9 @@ const manejarError = (err) => {
         <v-chip v-if="documentoEliminado" color="red" class="ml-2" small>
           Eliminado
         </v-chip>
+        <v-chip v-if="documento.codigo" color="green" class="ml-2" small>
+          {{ documento.codigo }}
+        </v-chip>
       </v-card-title>
 
       <div class="mb-4" v-if="usuario">
@@ -270,28 +291,26 @@ const manejarError = (err) => {
 
       <!-- Sección de búsqueda -->
       <v-row>
-        <v-col cols="12" sm="6">
+        <v-col cols="12" sm="8">
           <v-text-field
             v-model="searchWord"
-            append-inner-icon="mdi-magnify"
-            label="Buscar en documentos"
-            @keydown.enter="buscarDocumentos"
-            @click:append-inner="buscarDocumentos"
-            clearable
-            hint="Buscar por descripción o tipo"
-            persistent-hint
-          />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <v-text-field
-            v-model="documento.codigo"
-            label="Buscar por código exacto"
+            label="Buscar documento por código"
             append-inner-icon="mdi-magnify"
             @click:append-inner="buscarPorCodigo"
             :disabled="editando"
-            hint="Ingrese el código exacto del documento (activo o eliminado)"
+            hint="Ingrese el código exacto del documento"
             persistent-hint
           />
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-btn
+            color="primary"
+            @click="buscarDocumentos"
+            block
+          >
+            <v-icon start>mdi-refresh</v-icon>
+            Actualizar lista
+          </v-btn>
         </v-col>
       </v-row>
 
@@ -309,7 +328,9 @@ const manejarError = (err) => {
                   class="cursor-pointer"
                 >
                   <template v-slot:prepend>
-                    <v-icon color="green">mdi-file-document</v-icon>
+                    <v-icon :color="doc.vigente ? 'green' : 'orange'">
+                      mdi-file-document
+                    </v-icon>
                   </template>
                   <v-list-item-title>{{ doc.descripcion }}</v-list-item-title>
                   <v-list-item-subtitle>
@@ -326,22 +347,13 @@ const manejarError = (err) => {
       <v-form @submit.prevent="editando ? actualizarDocumento() : registrarDocumento()">
         <v-row dense>
           <v-col cols="12" sm="6">
-            <v-text-field 
-              v-model="documento.codigo" 
-              label="Código único del documento" 
-              :disabled="editando" 
-              required
-              hint="Ejemplo: LEY-1234-2023"
-              persistent-hint
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
             <v-select
               v-model="documento.tipo"
               :items="tiposDocumento"
-              label="Tipo de documento"
+              label="Tipo de documento*"
               outlined
               required
+              :rules="[v => !!v || 'Tipo es requerido']"
               hint="Selecciona el tipo de documento normativo"
               persistent-hint
             />
@@ -349,10 +361,22 @@ const manejarError = (err) => {
           <v-col cols="12" sm="6">
             <v-text-field 
               v-model="documento.fuente" 
-              label="Fuente u origen" 
-              :disabled="editando"
+              label="Fuente u origen*" 
+              :rules="[v => !!v || 'Fuente es requerida']"
               hint="Ejemplo: Ministerio de Economía"
               persistent-hint
+              required
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea 
+              v-model="documento.descripcion" 
+              label="Descripción completa*" 
+              rows="3"
+              :rules="[v => !!v || 'Descripción es requerida']"
+              hint="Describe el contenido y propósito del documento"
+              persistent-hint
+              required
             />
           </v-col>
           <v-col cols="12" sm="6">
@@ -363,25 +387,21 @@ const manejarError = (err) => {
               persistent-hint
             />
           </v-col>
-          <v-col cols="12">
-            <v-textarea 
-              v-model="documento.descripcion" 
-              label="Descripción completa" 
-              rows="3"
-              hint="Describe el contenido y propósito del documento"
-              persistent-hint
-            />
-          </v-col>
           <v-col cols="12" sm="6">
             <v-text-field 
-              v-model="documento.anio" 
-              label="Año de publicación" 
+              v-model.number="documento.anio" 
+              label="Año de publicación*" 
               type="number"
+              :rules="[
+                v => !!v || 'Año es requerido',
+                v => (v >= 2000 && v <= new Date().getFullYear()) || 'Año inválido'
+              ]"
               hint="Año de emisión del documento"
               persistent-hint
+              required
             />
           </v-col>
-          <v-col cols="12" sm="6">
+          <v-col cols="12">
             <v-text-field 
               v-model="documento.enlace" 
               label="URL del documento" 
@@ -405,16 +425,12 @@ const manejarError = (err) => {
           <v-col cols="12" sm="6">
             <v-select
               v-model="documento.aplicacion"
-              :items="[
-                { title: 'Nacional', value: 'Nacional' },
-                { title: 'Departamental', value: 'Departamental' },
-                { title: 'Municipal', value: 'Municipal' }
-              ]"
-              label="Nivel de aplicación"
-              item-title="title"
-              item-value="value"
+              :items="['Nacional', 'Departamental', 'Municipal']"
+              label="Nivel de aplicación*"
+              :rules="[v => !!v || 'Nivel es requerido']"
               hint="Selecciona el nivel administrativo"
               persistent-hint
+              required
             />
           </v-col>
           <v-col cols="12">
@@ -444,6 +460,7 @@ const manejarError = (err) => {
               type="number"
               hint="Nivel jerárquico normativo (1-5)"
               persistent-hint
+              :rules="[v => !v || (v >= 1 && v <= 5) || 'Debe ser entre 1 y 5']"
             />
           </v-col>
           <v-col cols="12">
@@ -505,29 +522,15 @@ const manejarError = (err) => {
 
 <style scoped>
 .v-container {
-  background: linear-gradient(145deg, #fdf6f0, #f3f8ff);
+  background: linear-gradient(145deg, #f5f7fa, #e4e8f0);
   min-height: 100vh;
   padding: 2rem;
 }
 
 .v-card {
-  background-color: #ffffffd0;
-  border: 2px solid #f0e6ff;
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease;
-}
-
-.v-card:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.v-card-title {
-  font-family: "Poppins", sans-serif;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #6b4c9a;
-  text-align: center;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .cursor-pointer {
@@ -544,63 +547,13 @@ const manejarError = (err) => {
 }
 
 .text-red {
-  color: #cf2e2e;
+  color: #ff5252;
   font-weight: 500;
 }
 
-/* Estilos para los botones */
 .v-btn {
-  font-weight: 600;
-  font-family: "Poppins", sans-serif;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s;
-  text-transform: none;
+  font-weight: 500;
   letter-spacing: normal;
-}
-
-.v-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.v-btn[color="primary"] {
-  background-color: #4a6bff;
-  color: white;
-}
-
-.v-btn[color="red"] {
-  background-color: #ff4d4d;
-  color: white;
-}
-
-.v-btn[color="green"] {
-  background-color: #4caf50;
-  color: white;
-}
-
-.v-btn[color="grey"] {
-  background-color: #9e9e9e;
-  color: white;
-}
-
-/* Estilos para los campos del formulario */
-.v-text-field, .v-select, .v-textarea {
-  background-color: #fafafa;
-  border-radius: 8px;
-}
-
-.v-input__details {
-  padding-top: 4px;
-}
-
-/* Estilos para la lista de resultados */
-.v-list-item {
-  border-left: 3px solid transparent;
-  transition: all 0.2s;
-}
-
-.v-list-item:hover {
-  border-left-color: #4a6bff;
+  text-transform: none;
 }
 </style>

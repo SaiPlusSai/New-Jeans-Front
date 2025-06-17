@@ -82,7 +82,7 @@ export default {
       try {
         this.loading = true;
         // Asumo que la API puede filtrar documentos no vigentes (eliminados lógicamente)
-        const response = await fetch('/api/documentos?vigente=false');
+        const response = await fetch('http://localhost:3000/api/documentos?vigente=0');
         if (!response.ok) throw new Error('Error al cargar documentos');
         
         this.documentos = await response.json();

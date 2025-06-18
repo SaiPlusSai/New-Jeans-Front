@@ -12,7 +12,7 @@
           cols="12"
         >
         <v-card outlined>
-          <v-card-title>{{ doc.descripcion }}</v-card-title>
+          <v-card-title>{{ doc.codigo }}: {{ doc.descripcion }}</v-card-title>
           <v-card-subtitle>{{ doc.fuente }}</v-card-subtitle>
           <v-card-text>
             <p>

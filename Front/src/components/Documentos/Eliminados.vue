@@ -135,6 +135,8 @@ export default {
       // Recargar la lista y mostrar notificación
       await this.cargarDocumentosEliminados();
       
+      this.triggerParent()
+
       // Usando una notificación más elegante que alert()
       this.$notify({
         title: 'Éxito',
@@ -160,6 +162,15 @@ export default {
     
     mostrarDetalles(documento) {
       this.documentoSeleccionado = documento;
+    }
+  },
+  setup(props, { emit }){
+    const triggerParent = () => {
+      emit('childTriggered');
+    }
+
+    return{
+      triggerParent
     }
   }
 }

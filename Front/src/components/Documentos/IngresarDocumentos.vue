@@ -1,17 +1,11 @@
 <script setup>
 import Eliminados from '../Documentos/Eliminados.vue'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const token = localStorage.getItem('token')
-
-// Refs y variables
-const usuario = ref(null)
-const rol = ref(null)
-const aplicaciones = ref([])
-const usuarios = ref([])
 
 const documento = ref({
   tipo: '',
@@ -23,9 +17,8 @@ const documento = ref({
   aplicacion_id: null,
   conceptos_cpe: '',
   creado_por: null,
-  jerarquia: null,
-  vigente: true,
-  aplicacion: 'Nacional'
+  jerarquia: '',
+  vigente: true
 })
 
 const snackbar = ref(false)
@@ -36,7 +29,13 @@ const editando = ref(false)
 const documentoEliminado = ref(false)
 const searchWord = ref('')
 const docs = ref([])
-const showEliminados = ref(false)
+
+const targetDoc = ref(null)
+
+const filterVisible = ref(false)
+const selectedTipo = ref('')
+const searchAnio = ref(null)
+const searchFuente = ref('')
 
 const tiposDocumento = [
   'Ley',
@@ -48,36 +47,20 @@ const tiposDocumento = [
   'Otro'
 ]
 
-// Computed
-const aplicacionesOptions = computed(() => {
-  return aplicaciones.value.map(app => ({
-    title: app.nombre,
-    value: app.id
-  }))
-})
+const aplicaciones = [
+  { nombre: 'Nacional', id: 1 },
+  { nombre: 'Departamental', id: 2 },
+  { nombre: 'Municipal', id: 3 },
+]
 
-const usuariosOptions = computed(() => {
-  return usuarios.value.map(user => ({
-    title: `${user.nombre} (${user.email})`,
-    value: user.id
-  }))
-})
-
-// Cargar datos iniciales
-const cargarDatosIniciales = async () => {
-  try {
-    const [appsRes, usersRes] = await Promise.all([
-      axios.get('http://localhost:3000/api/aplicaciones'),
-      axios.get('http://localhost:3000/api/usuarios', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-    ])
-    aplicaciones.value = appsRes.data
-    usuarios.value = usersRes.data
-  } catch (err) {
-    console.error('Error cargando datos:', err)
-  }
-}
+const jerarquias = [
+  'Suprema',
+  'Alta',
+  'Media alta',
+  'Media',
+  'Media baja',
+  'Baja'
+]
 
 // Cargar perfil
 const obtenerPerfil = async () => {
@@ -86,9 +69,7 @@ const obtenerPerfil = async () => {
     const res = await axios.get('http://localhost:3000/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
-    usuario.value = res.data
-    rol.value = res.data.rol || 'sin rol'
-    documento.value.creado_por = usuario.value.id
+    documento.value.creado_por = res.data.usuario.id
   } catch (err) {
     error.value = 'Error al cargar perfil'
     localStorage.removeItem('token')
@@ -97,7 +78,6 @@ const obtenerPerfil = async () => {
 
 onMounted(() => {
   obtenerPerfil()
-  cargarDatosIniciales()
   buscarDocumentos()
 })
 
@@ -144,10 +124,61 @@ const buscarPorCodigo = async () => {
   }
 }
 
+const aplicarFiltros = async () => {
+    searchWord.value = '';
+
+    let filters = ['', '', ''], filtersString = '';
+    if(selectedTipo.value !== null){
+        filters[0] = `tipo=${encodeURIComponent(selectedTipo.value)}`;
+    }
+    if(searchFuente.value !== null){
+        filters[1] = `fuente=${encodeURIComponent(searchFuente.value)}`;
+    }
+    if(searchAnio.value !== null){
+        filters[2] = `anio=${encodeURIComponent(searchAnio.value)}`;
+    }
+
+    for(const filter of filters){
+        if(filtersString === '' && filter !== ''){
+            filtersString = filter;
+        } else {
+            if(filter !== ''){
+                filtersString = filtersString.concat('&', filter);
+            }
+        }
+    }
+
+    if(filtersString !== ''){
+        try {
+            const url = `http://localhost:3000/api/buscar?${filtersString}`;
+            const response = await axios.get(url);
+            docs.value = response.data;
+            if(docs.value.length === 0){
+                snackbar.value = true;
+                snackbarText.value = 'Sin resultados de búsqueda.';
+            }
+        } catch (error) {
+            console.error('Error al obtener documentos:', error);
+        }
+    } else {
+        snackbar.value = true;
+        snackbarText.value = 'Elija los filtros a aplicar.';
+    }
+};
+
+const limpiarFiltros = () => {
+    selectedTipo.value = null;
+    searchFuente.value = null;
+    searchAnio.value = null;
+    buscarDocumentos();
+};
+
 const seleccionarDocumento = (doc) => {
   Object.assign(documento.value, doc)
+  documento.value.vigente = Boolean(documento.value.vigente)
   editando.value = true
   documentoEliminado.value = doc.eliminado || false
+  targetDoc.value.scrollIntoView({ behavior: 'smooth' })
 }
 
 // Operaciones CRUD
@@ -159,10 +190,9 @@ const registrarDocumento = async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
     
-    mostrarSnackbar(response.data.mensaje)
-    documento.value.codigo = response.data.codigo
-    editando.value = true
+    mostrarSnackbar('Documento registrado exitosamente.')
     buscarDocumentos()
+    resetForm()
   } catch (err) {
     manejarError(err)
     if (err.response?.data?.detalles) {
@@ -187,8 +217,7 @@ const actualizarDocumento = async () => {
       conceptos_cpe: documento.value.conceptos_cpe,
       creado_por: documento.value.creado_por,
       jerarquia: documento.value.jerarquia,
-      vigente: documento.value.vigente,
-      aplicacion: documento.value.aplicacion
+      vigente: documento.value.vigente
     }
     
     await axios.put(`http://localhost:3000/api/documentos/${documento.value.codigo}`, datosActualizacion, {
@@ -211,6 +240,7 @@ const eliminarDocumento = async () => {
     mostrarSnackbar('Documento eliminado correctamente')
     documentoEliminado.value = true
     buscarDocumentos()
+    triggerChild()
   } catch (err) {
     manejarError(err)
   }
@@ -224,6 +254,7 @@ const restaurarDocumento = async () => {
     mostrarSnackbar('Documento restaurado correctamente')
     documentoEliminado.value = false
     buscarDocumentos()
+    triggerChild()
     resetForm()
   } catch (err) {
     manejarError(err)
@@ -241,10 +272,8 @@ const resetForm = () => {
     enlace: '',
     aplicacion_id: null,
     conceptos_cpe: '',
-    creado_por: usuario.value?.id || null,
     jerarquia: null,
-    vigente: true,
-    aplicacion: 'Nacional'
+    vigente: true
   }
   editando.value = false
   documentoEliminado.value = false
@@ -269,6 +298,19 @@ const manejarError = (err) => {
   }
   console.error('Error:', err.response?.data || err.message)
 }
+
+// Para comunicarse con Eliminados
+const child = ref(null)
+
+const triggerChild = () => {
+  if(child.value){
+    child.value.cargarDocumentosEliminados()
+  }
+}
+
+const childTriggered = () => {
+  buscarDocumentos()
+}
 </script>
 
 <template>
@@ -284,14 +326,9 @@ const manejarError = (err) => {
         </v-chip>
       </v-card-title>
 
-      <div class="mb-4" v-if="usuario">
-        <p><strong>Usuario:</strong> {{ usuario.nombre }}</p>
-        <p><strong>Rol:</strong> {{ rol }}</p>
-      </div>
-
       <!-- Sección de búsqueda -->
       <v-row>
-        <v-col cols="12" sm="8">
+        <v-col cols="12">
           <v-text-field
             v-model="searchWord"
             label="Buscar documento por código"
@@ -302,18 +339,59 @@ const manejarError = (err) => {
             persistent-hint
           />
         </v-col>
-        <v-col cols="12" sm="4">
-          <v-btn
-            color="primary"
-            @click="buscarDocumentos"
-            block
-          >
-            <v-icon start>mdi-refresh</v-icon>
-            Actualizar lista
-          </v-btn>
-        </v-col>
       </v-row>
 
+      <!-- Sección de filtros -->
+       <v-row>
+          <v-btn @click="filterVisible = !filterVisible" color="primary" block>
+              {{ filterVisible ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+          </v-btn>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+            <v-expand-transition>
+                <v-card v-if="filterVisible" elevated>
+                    <v-card-title>Filtros</v-card-title>
+                    <v-card-text>
+                    <v-form> 
+                        <v-select
+                        v-model="selectedTipo"
+                        :items="tiposDocumento"
+                        label="Tipo"
+                        clearable
+                        ></v-select>
+
+                        <v-text-field
+                        v-model="searchFuente"
+                        label="Fuente"
+                        type="text"
+                        clearable
+                        ></v-text-field>
+
+                        <v-text-field
+                        v-model="searchAnio"
+                        label="Año"
+                        type="number"
+                        clearable
+                        :rules="[
+                          v => !!v || 'Año es requerido',
+                          v => (v >= 2000 && v <= new Date().getFullYear()) || 'Año inválido'
+                        ]"
+                        ></v-text-field>
+                    </v-form>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn @click="aplicarFiltros" color="primary">
+                            Aplicar filtros
+                        </v-btn>
+                        <v-btn @click="limpiarFiltros" color="red">
+                            Limpiar filtros
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-expand-transition>
+        </v-col>
+      </v-row>
       <!-- Resultados de búsqueda -->
       <v-row v-if="docs.length > 0">
         <v-col cols="12">
@@ -344,10 +422,11 @@ const manejarError = (err) => {
       </v-row>
 
       <!-- Formulario -->
-      <v-form @submit.prevent="editando ? actualizarDocumento() : registrarDocumento()">
+      <v-form ref="targetDoc" @submit.prevent="editando ? actualizarDocumento() : registrarDocumento()">
         <v-row dense>
           <v-col cols="12" sm="6">
             <v-select
+              class="input"
               v-model="documento.tipo"
               :items="tiposDocumento"
               label="Tipo de documento*"
@@ -360,6 +439,7 @@ const manejarError = (err) => {
           </v-col>
           <v-col cols="12" sm="6">
             <v-text-field 
+              class="input"
               v-model="documento.fuente" 
               label="Fuente u origen*" 
               :rules="[v => !!v || 'Fuente es requerida']"
@@ -370,6 +450,7 @@ const manejarError = (err) => {
           </v-col>
           <v-col cols="12">
             <v-textarea 
+              class="input"
               v-model="documento.descripcion" 
               label="Descripción completa*" 
               rows="3"
@@ -379,16 +460,34 @@ const manejarError = (err) => {
               required
             />
           </v-col>
-          <v-col cols="12" sm="6">
-            <v-text-field 
-              v-model="documento.relevancia" 
-              label="Nivel de relevancia" 
-              hint="Ejemplo: Alto, Medio, Bajo"
+          <v-col cols="12" sm="4">
+            <v-select
+              class="input"
+              v-model="documento.aplicacion_id"
+              :items="aplicaciones"
+              item-title="nombre"
+              item-value="id"
+              label="Nivel de aplicación*"
+              :rules="[v => !!v || 'Nivel de aplicación es requerido']"
+              hint="Selecciona el nivel administrativo"
               persistent-hint
+              required
             />
           </v-col>
-          <v-col cols="12" sm="6">
+          <v-col cols="12" sm="4">
+            <v-select 
+              class="input"
+              v-model.number="documento.jerarquia" 
+              :items="jerarquias"
+              label="Nivel de jerarquía" 
+              hint="Nivel jerárquico normativo"
+              persistent-hint
+              :rules="[v => !!v || 'Nivel de jerarquía es requerido']"
+            />
+          </v-col>
+          <v-col cols="12" sm="4">
             <v-text-field 
+              class="input"
               v-model.number="documento.anio" 
               label="Año de publicación*" 
               type="number"
@@ -402,7 +501,18 @@ const manejarError = (err) => {
             />
           </v-col>
           <v-col cols="12">
+            <v-textarea 
+              class="input"
+              v-model="documento.relevancia" 
+              label="Relevancia" 
+              rows="2"
+              hint="Ejemplo: Establece criterios nutricionales mínimos"
+              persistent-hint
+            />
+          </v-col>
+          <v-col cols="12">
             <v-text-field 
+              class="input"
               v-model="documento.enlace" 
               label="URL del documento" 
               type="url"
@@ -410,61 +520,18 @@ const manejarError = (err) => {
               persistent-hint
             />
           </v-col>
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="documento.aplicacion_id"
-              :items="aplicacionesOptions"
-              label="Ámbito de aplicación"
-              item-title="title"
-              item-value="value"
-              clearable
-              hint="Selecciona el ámbito territorial de aplicación"
-              persistent-hint
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="documento.aplicacion"
-              :items="['Nacional', 'Departamental', 'Municipal']"
-              label="Nivel de aplicación*"
-              :rules="[v => !!v || 'Nivel es requerido']"
-              hint="Selecciona el nivel administrativo"
-              persistent-hint
-              required
-            />
-          </v-col>
           <v-col cols="12">
             <v-text-field 
+              class="input"
               v-model="documento.conceptos_cpe" 
               label="Conceptos CPE relacionados" 
               hint="Conceptos constitucionales vinculados"
               persistent-hint
             />
           </v-col>
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="documento.creado_por"
-              :items="usuariosOptions"
-              label="Responsable del registro"
-              item-title="title"
-              item-value="value"
-              :disabled="!usuario || rol !== 'admin'"
-              hint="Usuario responsable del registro"
-              persistent-hint
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-text-field 
-              v-model.number="documento.jerarquia" 
-              label="Nivel de jerarquía" 
-              type="number"
-              hint="Nivel jerárquico normativo (1-5)"
-              persistent-hint
-              :rules="[v => !v || (v >= 1 && v <= 5) || 'Debe ser entre 1 y 5']"
-            />
-          </v-col>
           <v-col cols="12">
             <v-checkbox 
+              class="input"
               v-model="documento.vigente" 
               label="¿Documento vigente?"
               hint="Indica si el documento está actualmente en vigor"
@@ -498,6 +565,7 @@ const manejarError = (err) => {
           </v-btn>
 
           <v-btn
+            v-if="editando"
             color="grey"
             @click="resetForm"
           >
@@ -516,7 +584,7 @@ const manejarError = (err) => {
         <v-btn variant="text" @click="snackbar = false">Cerrar</v-btn>
       </template>
     </v-snackbar>
-    <Eliminados />
+    <Eliminados ref="child" @childTriggered="childTriggered"/>
   </v-container>
 </template>
 
@@ -531,6 +599,10 @@ const manejarError = (err) => {
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.input {
+  padding: 10px;
 }
 
 .cursor-pointer {

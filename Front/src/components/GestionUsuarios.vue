@@ -1,0 +1,579 @@
+<template>
+  <v-container class="py-8">
+    <v-row>
+        <v-card class="mx-auto pa-6" max-width="800">
+        <v-card-title class="text-h6 mb-4">
+            {{ editing ? 'Modificar Usuario' : 'Registrar Usuario' }}
+            <v-chip v-if="deletedUser" color="red" class="ml-2" small>
+            Eliminado
+            </v-chip>
+            <v-chip v-if="user.id" color="blue" class="ml-2" small>
+            {{ user.correo }}
+            </v-chip>
+        </v-card-title>
+
+        <!-- Sección de filtro -->
+        <v-row>
+            <v-switch 
+                class="input"
+                v-model="onlyMiga" 
+                label="Mostrar solo usuarios MIGA"
+                @change="showOnlyMiga"
+            </v-switch>
+        </v-row>
+
+        <!-- Resultados de búsqueda -->
+        <v-row v-if="users.length > 0">
+            <v-col cols="12">
+            <v-card variant="outlined" class="mb-4">
+                <v-card-title>Usuarios habilitados</v-card-title>
+                <v-card-text>
+                <v-list>
+                    <v-list-item
+                    v-for="user in users"
+                    :key="user.id"
+                    @click="pickUser(user)"
+                    class="cursor-pointer"
+                    >
+                    <template v-slot:prepend>
+                        <v-icon :color="user.rol == 'COMUNIDAD' ? 'orange' : 'green'">
+                        mdi-account
+                        </v-icon>
+                    </template>
+                    <v-list-item-title>{{ user.apellidop }} {{ user.apellidom }} {{ user.nombres }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                        {{ user.correo }}
+                    </v-list-item-subtitle>
+                    <template v-slot:append>
+                        <v-list-item-action>
+                            <v-chip :color="user.rol == 'COMUNIDAD' ? 'orange' : 'green'" dark>
+                                {{ user.rol === 'COMUNIDAD' ? 'COMUNIDAD' : 'MIGA'}}
+                            </v-chip>
+                        </v-list-item-action>
+                    </template>
+                    </v-list-item>
+                </v-list>
+                </v-card-text>
+            </v-card>
+            </v-col>
+        </v-row>
+
+        <!-- Formulario -->
+        <v-form ref="targetUser" @submit.prevent="editing ? updateUser() : registerUser()">
+            <v-row dense>
+            <v-col cols="12" sm="6">
+                <v-text-field 
+                class="input"
+                v-model="user.apellidop" 
+                label="Apellido paterno del usuario *" 
+                :rules="[v => !!v || 'Apellido paterno es requerido']"
+                hint="Ejemplo: Carrasco"
+                persistent-hint
+                required
+                />
+            </v-col>
+            <v-col cols="12" sm="6">
+                <v-text-field 
+                class="input"
+                v-model="user.apellidom" 
+                label="Apellido materno del usuario *" 
+                :rules="[v => !!v || 'Apellido materno es requerido']"
+                hint="Ejemplo: Flores"
+                persistent-hint
+                required
+                />
+            </v-col>
+            <v-col cols="12" sm="4">
+                <v-text-field 
+                class="input"
+                v-model="user.nombres" 
+                label="Nombre/s del usuario *" 
+                :rules="[v => !!v || 'Nombre/s es requerido']"
+                hint="Ejemplo: José María"
+                persistent-hint
+                required
+                />
+            </v-col>
+            <v-col cols="12" sm="8">
+                <v-text-field 
+                class="input"
+                v-model="user.correo" 
+                label="Correo del usuario *" 
+                :rules="[
+                    v => !!v || 'Correo es requerido',
+                    v => /.+@.+\..+/.test(v) || 'El correo no es válido']"
+                hint="Ejemplo: ejemplo@gmail.com"
+                persistent-hint
+                required
+                />
+            </v-col>
+            <v-col v-if="!editing" cols="12" sm="6">
+                <v-text-field 
+                class="input"
+                :type="showPassword1 ? 'text' : 'password'"
+                :append-inner-icon="showPassword1 ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="showPassword1 = !showPassword1"
+                v-model="user.contraseña" 
+                label="Contraseña del usuario *" 
+                :rules="[
+                    v => !!v || 'Contraseña es requerido',
+                    v => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres']"
+                required
+                />
+            </v-col>
+            <v-col v-if="!editing" cols="12" sm="6">
+                <v-text-field 
+                class="input"
+                :type="showPassword2 ? 'text' : 'password'"
+                :append-inner-icon="showPassword2 ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="showPassword2 = !showPassword2"
+                v-model="confirmPass"
+                label="Confirme la contraseña *" 
+                :rules="[
+                    v => !!v || 'Contraseña es requerido',
+                    v => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
+                    v => v === user.contraseña || 'Las contraseñas no coinciden']"
+                hint="Vuelva a escribir la contraseña para confirmar"
+                persistent-hint
+                required
+                />
+            </v-col>
+            <v-col cols="12">
+                <v-checkbox 
+                class="input"
+                v-model="isMiga" 
+                label="¿Es un usuario MIGA?"
+                hint="Indica si el usuario tiene permisos de usuarios MIGA"
+                persistent-hint
+                />
+            </v-col>
+            </v-row>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+            <v-btn type="submit" color="primary" :loading="loading">
+                <v-icon start>mdi-content-save</v-icon>
+                {{ editing ? 'Actualizar' : 'Registrar' }}
+            </v-btn>
+
+            <v-btn
+                v-if="editing && !deletedUser"
+                color="red"
+                @click="deleteUser"
+            >
+                <v-icon start>mdi-delete</v-icon>
+                Eliminar
+            </v-btn>
+
+            <v-btn
+                v-if="editing && deletedUser"
+                color="green"
+                @click="restoreUser"
+            >
+                <v-icon start>mdi-restore</v-icon>
+                Restaurar
+            </v-btn>
+
+            <v-btn
+                v-if="editing"
+                color="grey"
+                @click="resetForm"
+            >
+                <v-icon start>mdi-cancel</v-icon>
+                Cancelar
+            </v-btn>
+            </div>
+
+            <p v-if="error" class="mt-3 text-red">{{ error }}</p>
+        </v-form>
+        </v-card>
+    </v-row>
+
+    <!-- Eliminados -->
+    <v-row>
+        <v-row v-if="deletedUsers.length > 0" class="pt-8">
+          <v-card class="mx-auto pa-6" elevation="2" width="800">
+            <v-card-title>Documentos Eliminados</v-card-title>
+
+            <v-row>
+              <v-col cols="12">
+                <v-alert v-if="loadingDel" type="info" variant="tonal">
+                  Cargando documentos eliminados...
+                </v-alert>
+
+                <v-alert v-else-if="error" type="error" variant="tonal">
+                  {{ error }}
+                </v-alert>
+
+                <v-table
+                  v-else
+                  class="elevation-1"
+                  density="comfortable"
+                >
+                  <thead>
+                    <tr>
+                      <th class="text-left">
+                        Nombre
+                      </th>
+                      <th class="text-left">
+                        Correo
+                      </th>
+                      <th class="text-left">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="user in deletedUsers"
+                      :key="user.id"
+                    >
+                      <td>{{ user.apellidop }} {{ user.apellidom }} {{ user.nombres }}</td>
+                      <td>{{ user.correo }}</td>
+                      <td>
+                        <v-btn class="ma-4" color="primary" @click="restoreUserById(user.id)">
+                          <v-icon start>mdi-restore</v-icon>
+                          Restaurar
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-row>
+
+        <v-row v-else-if="!loadingDel" class="pt-8">
+          <v-alert type="info" variant="tonal">
+            No hay documentos eliminados para mostrar.
+          </v-alert>
+        </v-row>
+    </v-row>
+
+    <v-snackbar v-model="snackbar" color="green" timeout="3000">
+      {{ snackbarContent }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="snackbar = false">Cerrar</v-btn>
+      </template>
+    </v-snackbar>
+
+  </v-container>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const token = localStorage.getItem('token')
+
+const user = ref({
+  id: null,
+  nombres: '',
+  apellidop: '',
+  apellidom: '',
+  correo: '',
+  contraseña: '',
+  rol: ''
+})
+
+const snackbar = ref(false)
+const snackbarContent = ref('')
+const error = ref('')
+const loading = ref(false)
+const loadingDel = ref(false)
+const editing = ref(false)
+const deletedUser = ref(false)
+const users = ref([])
+const deletedUsers = ref([])
+
+const targetUser = ref(null)
+
+const showPassword1 = ref(false)
+const showPassword2 = ref(false)
+const confirmPass = ref('')
+const onlyMiga = ref(false)
+const isMiga = ref(false)
+
+// Verificar rol del perfil
+const verifyUser = async () => {
+  if (!token) return
+  try {
+    const res = await axios.get('http://localhost:3000/api/usuarios/perfil', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    
+  } catch (err) {
+    error.value = 'Error al cargar perfil'
+    localStorage.removeItem('token')
+  }
+}
+
+// Cargar usuarios habilitados
+const loadUsers = async () => {
+  error.value = ''
+  loading.value = true
+  try {
+    const res = await axios.get('http://localhost:3000/api/usuarios-miga/todos', {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+    users.value = res.data
+  } catch (err) {
+    error.value = 'Error al cargar usuarios'
+  } finally {
+    loading.value = false
+  }
+}
+
+// Cargar usuarios no habilitados
+const loadDeleted = async () => {
+  error.value = ''
+  loadingDel.value = true
+  try {
+    const res = await axios.get('http://localhost:3000/api/usuarios-miga/eliminados', {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+    deletedUsers.value = res.data
+  } catch (err) {
+    error.value = 'Error al cargar usuarios'
+  } finally {
+    loadingDel.value = false
+  }
+}
+
+
+// Filtrar usuarios MIGA
+const showOnlyMiga = async () => {
+    console.log(onlyMiga.value)
+    if(onlyMiga.value){
+        error.value = ''
+        loading.value = true
+        try {
+            const res = await axios.get('http://localhost:3000/api/usuarios-miga/solo-miga', {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            users.value = res.data
+        } catch (err) {
+            error.value = 'Error al cargar usuarios'
+        } finally {
+            loading.value = false
+        }
+    } else {
+        loadUsers()
+    }
+}
+
+// Seleccionar usuario
+const pickUser = async (u) => {
+  Object.assign(user.value, u)
+  isMiga.value = user.value.rol === 'COMUNIDAD' ? false : true
+  editing.value = true
+  deletedUser.value = u.eliminado || false
+  targetUser.value.scrollIntoView({ behavior: 'smooth' })
+}
+
+// Insertar usuario nuevo
+const registerUser = async () => {
+  if(user.value.contraseña !== confirmPass.value){
+    error.value = 'Confirme la contraseña'
+    return
+  }
+  error.value = ''
+  loading.value = true
+  try {
+    const newData = {
+      nombres: user.value.nombres,
+      apellidop: user.value.apellidop,
+      apellidom: user.value.apellidom,
+      correo: user.value.correo,
+      contraseña: user.value.contraseña,
+    }
+    let response
+    if(isMiga.value){
+        response = await axios.post('http://localhost:3000/api/usuarios-miga', newData, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+    } else {
+        response = await axios.post('http://localhost:3000/api/usuarios/register', newData, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+    }
+    
+    showSnackbar('Usuario registrado exitosamente.')
+    loadUsers()
+    resetForm()
+  } catch (err) {
+    handleError(err)
+    if (err.response?.data?.detalles) {
+      error.value = err.response.data.detalles.join(', ')
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+// Modificar usuario
+const updateUser = async () => {
+  error.value = ''
+  loading.value = true
+  try {
+    const updatedData = {
+      nombres: user.value.nombres,
+      apellidop: user.value.apellidop,
+      apellidom: user.value.apellidom,
+      correo: user.value.correo,
+    }
+    const response1 = await axios.patch(`http://localhost:3000/api/usuarios/${user.value.id}`, updatedData, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        })
+    
+    const newRol = {
+        nuevoRol: isMiga.value ? 'MIGA' : 'COMUNIDAD'
+    }
+    const response2 = await axios.put(`http://localhost:3000/api/usuarios-miga/${user.value.id}/rol`, newRol, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        })
+    
+    showSnackbar('Usuario modificado exitosamente.')
+    loadUsers()
+    resetForm()
+  } catch (err) {
+    handleError(err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Elimnar usuario
+const deleteUser = async () => {
+  try {
+    await axios.put(`http://localhost:3000/api/usuarios-miga/${user.value.id}/eliminar`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    showSnackbar('Usuario eliminado correctamente')
+    deletedUser.value = true
+    loadUsers()
+    loadDeleted()
+  } catch (err) {
+    handleError(err)
+  }
+}
+
+// Restaurar usuario
+const restoreUser = async () => {
+  try {
+    await axios.put(`http://localhost:3000/api/usuarios-miga/${user.value.id}/restaurar`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    showSnackbar('Usuario restaurado correctamente')
+    deletedUser.value = true
+    loadUsers()
+    resetForm()
+    loadDeleted()
+  } catch (err) {
+    handleError(err)
+  }
+}
+
+// Restaurar usuario por ID
+const restoreUserById = async (id) => {
+  try {
+    await axios.put(`http://localhost:3000/api/usuarios-miga/${id}/restaurar`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    showSnackbar('Usuario restaurado correctamente')
+    deletedUser.value = true
+    loadUsers()
+    resetForm()
+    loadDeleted()
+  } catch (err) {
+    handleError(err)
+  }
+}
+
+// Helpers
+const resetForm = () => {
+  user.value = {
+    id: null,
+    nombres: '',
+    apellidop: '',
+    apellidom: '',
+    correo: '',
+    contraseña: '',
+    rol: 'MIGA'
+  }
+  editing.value = false
+  deletedUser.value = false
+}
+
+const showSnackbar = (mensaje) => {
+  snackbarContent.value = mensaje
+  snackbar.value = true
+}
+
+const handleError = (err) => {
+  if (err.response?.status === 401 || err.response?.status === 403) {
+    error.value = 'No tienes permisos para esta acción'
+    router.push('/login')
+  } else if (err.response?.status === 400) {
+    error.value = err.response.data.message || 'Datos inválidos'
+  } else if (err.response?.status === 404) {
+    error.value = 'Documento no encontrado'
+  } else {
+    error.value = 'Error en el servidor'
+  }
+  console.error('Error:', err.response?.data || err.message)
+}
+
+onMounted(() => {
+  verifyUser()
+  loadUsers()
+  loadDeleted()
+})
+
+</script>
+
+<style scoped>
+.v-container {
+  background: linear-gradient(145deg, #f5f7fa, #e4e8f0);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.v-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.input {
+  padding: 10px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cursor-pointer:hover {
+  background-color: #f5f5f5;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.text-red {
+  color: #ff5252;
+  font-weight: 500;
+}
+
+.v-btn {
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+</style>

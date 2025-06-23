@@ -65,6 +65,9 @@
           <v-btn v-if="isLogged" class="nav-button btn5" to="/favs" tag="RouterLink">
             <v-icon start>mdi-heart</v-icon>Favoritos
           </v-btn>
+          <v-btn v-if="isMiga" class="nav-button btn6" to="/usuarios" tag="RouterLink">
+            <v-icon start>mdi-account</v-icon>Usuarios
+          </v-btn>
           <v-btn v-if="isMiga" class="nav-button btn6" to="/reportes" tag="RouterLink">
             <v-icon start>mdi-chart-bar</v-icon>Reportes
           </v-btn>
@@ -107,6 +110,10 @@
           <v-list-item-title>Favoritos</v-list-item-title>
         </v-list-item>
 
+        <v-list-item v-if="isMiga" to="/usuarios">
+          <v-list-item-title>Usuarios</v-list-item-title>
+        </v-list-item>
+
         <v-list-item v-if="isMiga" to="/reportes">
           <v-list-item-title>Reportes</v-list-item-title>
         </v-list-item>
@@ -114,8 +121,8 @@
         <v-list-item v-if="!isCommunity" to="/propuestas">
           <v-list-item-title>Propuestas</v-list-item-title>
         </v-list-item>
-        <v-list-item v-if="isCommunity" to="/propuestas">
-          <v-list-item-title>Mis propuestas</v-list-item-title>
+        <v-list-item v-else-if="isCommunity" to="/propuestas">
+          <v-list-item-title>Mis propuestas</v-list-item-title> 
         </v-list-item>
 
         <v-list-item v-if="!isLogged" to="/login">

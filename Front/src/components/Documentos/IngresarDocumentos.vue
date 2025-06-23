@@ -39,11 +39,11 @@ const searchFuente = ref('')
 
 const tiposDocumento = [
   'Ley',
-  'Decreto Supremo',
-  'Resolución Ministerial',
+  'Decreto',
+  'Resolución',
   'Plan',
   'Norma',
-  'Resolución Municipal',
+  'Resolución_Municipal',
   'Otro'
 ]
 

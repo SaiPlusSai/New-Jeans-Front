@@ -130,7 +130,13 @@ const snackbar = ref(false);
 const snackbarContent = ref('');
 const searchWord = ref('');
 const filterVisible = ref(false);
-const tipos = ref(['ley', 'decreto', 'resolucion', 'circular', 'reglamento', 'otro']);
+const tipos = ref([ 'Ley',
+  'Decreto',
+  'Resolución',
+  'Plan',
+  'Norma',
+  'Resolución_Municipal',
+  'Otro']);
 const selectedTipo = ref(null);
 const searchFuente = ref(null);
 const searchAnio = ref(null);

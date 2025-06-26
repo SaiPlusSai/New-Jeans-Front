@@ -42,7 +42,7 @@
                     </template>
                     <v-list-item-title>{{ user.apellidop }} {{ user.apellidom }} {{ user.nombres }}</v-list-item-title>
                     <v-list-item-subtitle>
-                        {{ user.correo }}
+                        {{ user.Usuario_defecto }}
                     </v-list-item-subtitle>
                     <template v-slot:append>
                         <v-list-item-action>
@@ -83,7 +83,7 @@
                 required
                 />
             </v-col>
-            <v-col cols="12" sm="4">
+            <v-col cols="12" sm="6">
                 <v-text-field 
                 class="input"
                 v-model="user.nombres" 
@@ -94,20 +94,41 @@
                 required
                 />
             </v-col>
-            <v-col cols="12" sm="8">
+            <v-col cols="12" sm="6">
+                <v-text-field 
+                class="input"
+                type="number"
+                v-model="user.carnet_ci" 
+                label="Carnet de identidad del usuario *" 
+                :rules="[v => !!v || 'Carnet de identidad es requerido']"
+                required
+                />
+            </v-col>
+            <v-col v-if="editing" cols="12" sm="5">
+                <v-text-field 
+                class="input"
+                v-model="user.Usuario_defecto" 
+                label="Nombre de usuario *" 
+                :rules="[
+                    v => !!v || 'Usuario es requerido']"
+                hint="Ejemplo: jose.carrasco"
+                persistent-hint
+                required
+                />
+            </v-col>
+            <v-col cols="12" sm="7">
                 <v-text-field 
                 class="input"
                 v-model="user.correo" 
-                label="Correo del usuario *" 
+                label="Correo del usuario (opcional)" 
                 :rules="[
-                    v => !!v || 'Correo es requerido',
-                    v => /.+@.+\..+/.test(v) || 'El correo no es válido']"
+                    v => !v || /.+@.+\..+/.test(v) || 'El correo no es válido']"
                 hint="Ejemplo: ejemplo@gmail.com"
                 persistent-hint
                 required
                 />
             </v-col>
-            <v-col v-if="!editing" cols="12" sm="6">
+            <v-col v-if="!editing && isMiga" cols="12" sm="6">
                 <v-text-field 
                 class="input"
                 :type="showPassword1 ? 'text' : 'password'"
@@ -121,7 +142,7 @@
                 required
                 />
             </v-col>
-            <v-col v-if="!editing" cols="12" sm="6">
+            <v-col v-if="!editing && isMiga" cols="12" sm="6">
                 <v-text-field 
                 class="input"
                 :type="showPassword2 ? 'text' : 'password'"
@@ -192,12 +213,12 @@
     <v-row>
         <v-row v-if="deletedUsers.length > 0" class="pt-8">
           <v-card class="mx-auto pa-6" elevation="2" width="800">
-            <v-card-title>Documentos Eliminados</v-card-title>
+            <v-card-title>Usuarios no habilitados</v-card-title>
 
             <v-row>
               <v-col cols="12">
                 <v-alert v-if="loadingDel" type="info" variant="tonal">
-                  Cargando documentos eliminados...
+                  Cargando usuarios no habilitados...
                 </v-alert>
 
                 <v-alert v-else-if="error" type="error" variant="tonal">
@@ -215,6 +236,9 @@
                         Nombre
                       </th>
                       <th class="text-left">
+                        Usuario
+                      </th>
+                      <th class="text-left">
                         Correo
                       </th>
                       <th class="text-left">
@@ -228,6 +252,7 @@
                       :key="user.id"
                     >
                       <td>{{ user.apellidop }} {{ user.apellidom }} {{ user.nombres }}</td>
+                      <td>{{ user.Usuario_defecto }}</td>
                       <td>{{ user.correo }}</td>
                       <td>
                         <v-btn class="ma-4" color="primary" @click="restoreUserById(user.id)">
@@ -245,7 +270,7 @@
 
         <v-row v-else-if="!loadingDel" class="pt-8">
           <v-alert type="info" variant="tonal">
-            No hay documentos eliminados para mostrar.
+            No hay usuarios no habilitados para mostrar.
           </v-alert>
         </v-row>
     </v-row>
@@ -263,7 +288,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const token = localStorage.getItem('token')
 
 const user = ref({
@@ -271,9 +298,11 @@ const user = ref({
   nombres: '',
   apellidop: '',
   apellidom: '',
+  carnet_ci: '',
   correo: '',
   contraseña: '',
-  rol: ''
+  rol: '',
+  Usuario_defecto: ''
 })
 
 const snackbar = ref(false)
@@ -301,7 +330,7 @@ const verifyUser = async () => {
     const res = await axios.get('http://localhost:3000/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
-    
+
   } catch (err) {
     error.value = 'Error al cargar perfil'
     localStorage.removeItem('token')
@@ -319,6 +348,7 @@ const loadUsers = async () => {
     users.value = res.data
   } catch (err) {
     error.value = 'Error al cargar usuarios'
+    handleError(err)
   } finally {
     loading.value = false
   }
@@ -335,6 +365,7 @@ const loadDeleted = async () => {
     deletedUsers.value = res.data
   } catch (err) {
     error.value = 'Error al cargar usuarios'
+    handleError(err)
   } finally {
     loadingDel.value = false
   }
@@ -343,7 +374,6 @@ const loadDeleted = async () => {
 
 // Filtrar usuarios MIGA
 const showOnlyMiga = async () => {
-    console.log(onlyMiga.value)
     if(onlyMiga.value){
         error.value = ''
         loading.value = true
@@ -373,10 +403,6 @@ const pickUser = async (u) => {
 
 // Insertar usuario nuevo
 const registerUser = async () => {
-  if(user.value.contraseña !== confirmPass.value){
-    error.value = 'Confirme la contraseña'
-    return
-  }
   error.value = ''
   loading.value = true
   try {
@@ -384,21 +410,32 @@ const registerUser = async () => {
       nombres: user.value.nombres,
       apellidop: user.value.apellidop,
       apellidom: user.value.apellidom,
-      correo: user.value.correo,
+      carnet_ci: user.value.carnet_ci,
+      correo: user.value.correo === '' ? null : user.value.correo,
       contraseña: user.value.contraseña,
     }
-    let response
+    let response, message
     if(isMiga.value){
-        response = await axios.post('http://localhost:3000/api/usuarios-miga', newData, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
+      if(user.value.contraseña !== confirmPass.value){
+        error.value = 'Confirme la contraseña'
+        return
+      }
+      
+      response = await axios.post('http://localhost:3000/api/usuarios-miga/registro-miga', newData, {
+          headers: { Authorization: `Bearer ${token}` }
+      })
+      
+      message = `${response.data.mensaje}: ${response.data.Usuario_defecto}.`
+
     } else {
-        response = await axios.post('http://localhost:3000/api/usuarios/register', newData, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
+      response = await axios.post('http://localhost:3000/api/usuarios/registro-comunidad', newData, {
+          headers: { Authorization: `Bearer ${token}` }
+      })
+
+      message = `${response.data.mensaje}: ${response.data.Usuario_defecto}. ${response.data.observacion}`
     }
-    
-    showSnackbar('Usuario registrado exitosamente.')
+
+    showSnackbar(message)
     loadUsers()
     resetForm()
   } catch (err) {
@@ -420,7 +457,9 @@ const updateUser = async () => {
       nombres: user.value.nombres,
       apellidop: user.value.apellidop,
       apellidom: user.value.apellidom,
+      carnet_ci: user.value.carnet_ci,
       correo: user.value.correo,
+      Usuario_defecto: user.value.Usuario_defecto
     }
     const response1 = await axios.patch(`http://localhost:3000/api/usuarios/${user.value.id}`, updatedData, {
                             headers: { Authorization: `Bearer ${token}` }
@@ -520,7 +559,7 @@ const handleError = (err) => {
   } else if (err.response?.status === 400) {
     error.value = err.response.data.message || 'Datos inválidos'
   } else if (err.response?.status === 404) {
-    error.value = 'Documento no encontrado'
+    error.value = 'Usuario no encontrado'
   } else {
     error.value = 'Error en el servidor'
   }

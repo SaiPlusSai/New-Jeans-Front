@@ -29,6 +29,7 @@ const editando = ref(false)
 const documentoEliminado = ref(false)
 const searchWord = ref('')
 const docs = ref([])
+const docsVisibles = ref([])
 
 const targetDoc = ref(null)
 
@@ -88,6 +89,7 @@ const buscarDocumentos = async () => {
   try {
     const res = await axios.get('http://localhost:3000/api/documentos')
     docs.value = res.data
+    docsVisibles.value = docs.value
   } catch (err) {
     error.value = 'Error al buscar documentos'
   } finally {
@@ -95,32 +97,16 @@ const buscarDocumentos = async () => {
   }
 }
 
-const buscarPorCodigo = async () => {
-  if (!searchWord.value) return
-  error.value = ''
-  loading.value = true
-  try {
-    const res = await axios.get(`http://localhost:3000/api/documentos/${searchWord.value}`)
-    Object.assign(documento.value, res.data)
-    editando.value = true
-    documentoEliminado.value = res.data.eliminado || false
-  } catch (err) {
-    if (err.response?.status === 404) {
-      try {
-        const res = await axios.get(`http://localhost:3000/api/documentos/${searchWord.value}?eliminado=true`)
-        Object.assign(documento.value, res.data)
-        editando.value = true
-        documentoEliminado.value = true
-      } catch (err2) {
-        error.value = 'Documento no encontrado'
-        resetForm()
-      }
-    } else {
-      error.value = 'Error al buscar documento'
-      resetForm()
-    }
-  } finally {
-    loading.value = false
+const buscarPorPalabra = async () => {
+  if (!searchWord.value || searchWord.value === '') docsVisibles.value = docs.value
+  docsVisibles.value = docs.value.filter(doc => 
+    (doc.codigo.toLowerCase().includes(searchWord.value.toLowerCase())) || 
+    (doc.descripcion.toLowerCase().includes(searchWord.value.toLowerCase())) || 
+    (doc.tipo.toLowerCase().includes(searchWord.value.toLowerCase())) || 
+    (doc.anio.toString().toLowerCase().includes(searchWord.value.toLowerCase()))
+  );
+  if(docsVisibles.value.length === 0){
+    mostrarSnackbar('Sin resultados de búsqueda.')
   }
 }
 
@@ -153,6 +139,7 @@ const aplicarFiltros = async () => {
             const url = `http://localhost:3000/api/buscar?${filtersString}`;
             const response = await axios.get(url);
             docs.value = response.data;
+            docsVisibles.value = docs.value
             if(docs.value.length === 0){
                 snackbar.value = true;
                 snackbarText.value = 'Sin resultados de búsqueda.';
@@ -170,6 +157,7 @@ const limpiarFiltros = () => {
     selectedTipo.value = null;
     searchFuente.value = null;
     searchAnio.value = null;
+    searchWord.value = null;
     buscarDocumentos();
 };
 
@@ -209,7 +197,7 @@ const actualizarDocumento = async () => {
   try {
     const datosActualizacion = {
       tipo: documento.value.tipo,
-      descripcion: documento.value.descripcion,
+      anio: documento.value.descripcion,
       relevancia: documento.value.relevancia,
       anio: documento.value.anio,
       enlace: documento.value.enlace,
@@ -331,12 +319,14 @@ const childTriggered = () => {
         <v-col cols="12">
           <v-text-field
             v-model="searchWord"
-            label="Buscar documento por código"
+            label="Buscar documento por palabra clave"
             append-inner-icon="mdi-magnify"
-            @click:append-inner="buscarPorCodigo"
+            @click:append-inner="buscarPorPalabra"
+            @keydown.enter="buscarPorPalabra"
             :disabled="editando"
-            hint="Ingrese el código exacto del documento"
+            hint="Ingrese una sola palabra clave"
             persistent-hint
+            clearable
           />
         </v-col>
       </v-row>
@@ -400,7 +390,7 @@ const childTriggered = () => {
             <v-card-text>
               <v-list>
                 <v-list-item
-                  v-for="doc in docs"
+                  v-for="doc in docsVisibles"
                   :key="doc.codigo"
                   @click="seleccionarDocumento(doc)"
                   class="cursor-pointer"

@@ -7,6 +7,7 @@ import FavoritosView from '@/views/FavoritosView.vue'
 import ReportesView from '@/views/ReportesView.vue'
 import PropuestasView from '@/views/PropuestasView.vue'
 import UsuariosView from '@/views/UsuariosView.vue'
+import Registro from '@/views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,16 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Registro,
+    },
+    {
+      path: '/cambiar',
+      name: 'cambiar',
+      component: () => import('../views/CambiarView.vue'),
     },
     {
     path: '/:pathMatch(.*)*',

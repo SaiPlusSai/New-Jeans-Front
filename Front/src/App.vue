@@ -80,8 +80,15 @@
           <v-btn v-if="!isLogged" class="nav-button btn3" to="/login" tag="RouterLink">
             <v-icon start>mdi-login</v-icon>Login
           </v-btn>
+          <v-btn v-if="!isLogged" class="nav-button btn3" to="/register" tag="RouterLink">
+            <v-icon start>mdi-account-plus</v-icon>
+            Registrarse
+          </v-btn>
           <v-btn v-if="isLogged" class="nav-button btn8" @click="logout()" to="/" tag="RouterLink">
             <v-icon start>mdi-login</v-icon>Cerrar sesión
+          </v-btn>
+          <v-btn v-if="isLogged" class="nav-button btn8" to="/cambiar" tag="RouterLink">
+            <v-icon start>mdi-lock-reset</v-icon> Cambiar contraseña
           </v-btn>
         </v-col>
       </v-row>
@@ -213,4 +220,3 @@
   to { transform: translateY(0); opacity: 1; }
 }
 </style>
-

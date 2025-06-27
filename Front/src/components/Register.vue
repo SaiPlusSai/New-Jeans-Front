@@ -29,7 +29,7 @@ export default {
         apellidop: "",
         apellidom: "",
         carnet_ci: "",
-        correo: "",
+        correo: null,
         contraseña: null,
       },
       mensaje: ""

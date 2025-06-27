@@ -201,13 +201,15 @@ const applyFilters = async () => {
     if(searchFuente.value !== null){
         filters[1] = `fuente=${encodeURIComponent(searchFuente.value)}`;
     }
-    if(searchAnio.value !== null){
-        if(searchAnio.value < 2000 || searchAnio.value > 2024){
-            inputError.value = 'El año debe estar entre 2000 y 2024'
-        } else {
-            filters[2] = `anio=${encodeURIComponent(searchAnio.value)}`;
-        }
+    if (searchAnio.value !== null) {
+      const anioActual = new Date().getFullYear();
+      if (searchAnio.value < 2000 || searchAnio.value > anioActual) {
+        inputError.value = `El año debe estar entre 2000 y ${anioActual}`;
+      } else {
+        filters[2] = `anio=${encodeURIComponent(searchAnio.value)}`;
+      }
     }
+
 
     for(const filter of filters){
         if(filtersString === '' && filter !== ''){

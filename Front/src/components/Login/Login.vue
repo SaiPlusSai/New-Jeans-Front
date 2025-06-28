@@ -30,7 +30,7 @@ const login = async () => {
     if (err.response.status === 401) {
       error.value = 'Credenciales inválidas'
     } else {
-      error.value = 'Error del servidor'
+      error.value = 'Usuario no encontrado'
     }
   } finally {
     loading.value = false 

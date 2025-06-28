@@ -12,6 +12,25 @@
             </v-chip>
         </v-card-title>
 
+        <!-- Barra de búsqueda -->
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+                v-model="searchWord"
+                append-inner-icon="mdi-magnify"
+                density="compact"
+                label="Buscar usuarios"
+                variant="solo"
+                single-line
+                clearable
+                @keydown.enter="searchUsers"
+                @click:append-inner="searchUsers"
+                hint="Ingrese el nombre, CI, correo o nombre de usuario"
+                persistent-hint
+            />
+          </v-col>
+        </v-row>
+
         <!-- Sección de filtro -->
         <v-row>
             <v-switch 
@@ -19,7 +38,8 @@
                 v-model="onlyMiga" 
                 label="Mostrar solo usuarios MIGA"
                 @change="showOnlyMiga"
-            </v-switch>
+                :color="'green'"
+            ></v-switch>
         </v-row>
 
         <!-- Resultados de búsqueda -->
@@ -28,7 +48,8 @@
             <v-card variant="outlined" class="mb-4">
                 <v-card-title>Usuarios habilitados</v-card-title>
                 <v-card-text>
-                <v-list>
+                <div style="max-height: 500px; overflow-y: auto;">
+                  <v-list>
                     <v-list-item
                     v-for="user in users"
                     :key="user.id"
@@ -42,7 +63,7 @@
                     </template>
                     <v-list-item-title>{{ user.apellidop }} {{ user.apellidom }} {{ user.nombres }}</v-list-item-title>
                     <v-list-item-subtitle>
-                        {{ user.Usuario_defecto }}
+                        CI: {{ user.carnet_ci }} - {{ user.Usuario_defecto }}
                     </v-list-item-subtitle>
                     <template v-slot:append>
                         <v-list-item-action>
@@ -52,7 +73,8 @@
                         </v-list-item-action>
                     </template>
                     </v-list-item>
-                </v-list>
+                  </v-list>
+                </div>
                 </v-card-text>
             </v-card>
             </v-col>
@@ -242,6 +264,9 @@
                         Correo
                       </th>
                       <th class="text-left">
+                        Carnet de Identidad
+                      </th>
+                      <th class="text-left">
                         Acciones
                       </th>
                     </tr>
@@ -254,6 +279,7 @@
                       <td>{{ user.apellidop }} {{ user.apellidom }} {{ user.nombres }}</td>
                       <td>{{ user.Usuario_defecto }}</td>
                       <td>{{ user.correo }}</td>
+                      <td>{{ user.carnet_ci }}</td>
                       <td>
                         <v-btn class="ma-4" color="primary" @click="restoreUserById(user.id)">
                           <v-icon start>mdi-restore</v-icon>
@@ -322,6 +348,7 @@ const showPassword2 = ref(false)
 const confirmPass = ref('')
 const onlyMiga = ref(false)
 const isMiga = ref(false)
+const searchWord = ref('')
 
 // Verificar rol del perfil
 const verifyUser = async () => {
@@ -529,6 +556,64 @@ const restoreUserById = async (id) => {
     loadDeleted()
   } catch (err) {
     handleError(err)
+  }
+}
+
+// Buscar usuarios
+const searchUsers = async () => {
+  onlyMiga.value = false
+
+  if(!searchWord.value){
+    loadUsers() 
+    return
+  }
+
+  const regexes = {
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    username: /^[^.]+\.([^.]+)$/,
+    id: /^\d+$/
+  }
+
+  if(regexes.email.test(searchWord.value) || regexes.username.test(searchWord.value) || regexes.id.test(searchWord.value)){
+    loading.value = true
+    try {
+      const encodedWord = encodeURIComponent(searchWord.value)
+      const url = `http://localhost:3000/api/usuarios/buscar-identificador?valor=${encodedWord}`
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      users.value = response.data
+
+      if(users.value.length === 0){
+          showSnackbar('Sin resultados de búsqueda.')
+      }
+
+    } catch (err) {
+      error.value = 'Error al buscar usuarios'
+      handleError(err)
+    } finally {
+      loading.value = false
+    }
+  } else {
+    loading.value = true
+    try {
+      const encodedWord = encodeURIComponent(searchWord.value)
+      const url = `http://localhost:3000/api/usuarios/buscar-google?frase=${encodedWord}`
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      users.value = response.data
+
+      if(users.value.length === 0){
+          showSnackbar('Sin resultados de búsqueda.')
+      }
+
+    } catch (err) {
+      error.value = 'Error al buscar usuarios'
+      handleError(err)
+    } finally {
+      loading.value = false
+    }
   }
 }
 

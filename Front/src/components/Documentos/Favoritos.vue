@@ -69,7 +69,7 @@ console.log(token);
 
 const fetchFavs = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/favoritos', {
+    const response = await axios.get('https://newjeans-back-production.up.railway.app/api/favoritos', {
         headers: {
         Authorization: `Bearer ${token}`
         }
@@ -86,7 +86,7 @@ const fetchFavs = async () => {
 
 const deleteFavorite = async (codigo) => {
     try {
-        const response = await axios.delete(`http://localhost:3000/api/favoritos/${codigo}`, {
+        const response = await axios.delete(`https://newjeans-back-production.up.railway.app/api/favoritos/${codigo}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

@@ -51,7 +51,7 @@ const cambiarContrasenia = async () => {
   try {
     const token = localStorage.getItem('token') // Ajusta si usas Vuex/Pinia
 
-    const response = await fetch('http://localhost:3000/api/usuarios/cambiar-contrasenia', {
+    const response = await fetch('https://newjeans-back-production.up.railway.app/api/usuarios/cambiar-contrasenia', {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,

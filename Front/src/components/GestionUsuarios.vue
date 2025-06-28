@@ -327,7 +327,7 @@ const isMiga = ref(false)
 const verifyUser = async () => {
   if (!token) return
   try {
-    const res = await axios.get('http://localhost:3000/api/usuarios/perfil', {
+    const res = await axios.get('https://newjeans-back-production.up.railway.app/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -342,7 +342,7 @@ const loadUsers = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.get('http://localhost:3000/api/usuarios-miga/todos', {
+    const res = await axios.get('https://newjeans-back-production.up.railway.app/api/usuarios-miga/todos', {
             headers: { Authorization: `Bearer ${token}` }
         })
     users.value = res.data
@@ -359,7 +359,7 @@ const loadDeleted = async () => {
   error.value = ''
   loadingDel.value = true
   try {
-    const res = await axios.get('http://localhost:3000/api/usuarios-miga/eliminados', {
+    const res = await axios.get('https://newjeans-back-production.up.railway.app/api/usuarios-miga/eliminados', {
             headers: { Authorization: `Bearer ${token}` }
         })
     deletedUsers.value = res.data
@@ -378,7 +378,7 @@ const showOnlyMiga = async () => {
         error.value = ''
         loading.value = true
         try {
-            const res = await axios.get('http://localhost:3000/api/usuarios-miga/solo-miga', {
+            const res = await axios.get('https://newjeans-back-production.up.railway.app/api/usuarios-miga/solo-miga', {
             headers: { Authorization: `Bearer ${token}` }
         })
             users.value = res.data
@@ -421,14 +421,14 @@ const registerUser = async () => {
         return
       }
       
-      response = await axios.post('http://localhost:3000/api/usuarios-miga/registro-miga', newData, {
+      response = await axios.post('https://newjeans-back-production.up.railway.app/api/usuarios-miga/registro-miga', newData, {
           headers: { Authorization: `Bearer ${token}` }
       })
       
       message = `${response.data.mensaje}: ${response.data.Usuario_defecto}.`
 
     } else {
-      response = await axios.post('http://localhost:3000/api/usuarios/registro-comunidad', newData, {
+      response = await axios.post('https://newjeans-back-production.up.railway.app/api/usuarios/registro-comunidad', newData, {
           headers: { Authorization: `Bearer ${token}` }
       })
 
@@ -461,14 +461,14 @@ const updateUser = async () => {
       correo: user.value.correo,
       Usuario_defecto: user.value.Usuario_defecto
     }
-    const response1 = await axios.patch(`http://localhost:3000/api/usuarios/${user.value.id}`, updatedData, {
+    const response1 = await axios.patch(`https://newjeans-back-production.up.railway.app/api/usuarios/${user.value.id}`, updatedData, {
                             headers: { Authorization: `Bearer ${token}` }
                         })
     
     const newRol = {
         nuevoRol: isMiga.value ? 'MIGA' : 'COMUNIDAD'
     }
-    const response2 = await axios.put(`http://localhost:3000/api/usuarios-miga/${user.value.id}/rol`, newRol, {
+    const response2 = await axios.put(`https://newjeans-back-production.up.railway.app/api/usuarios-miga/${user.value.id}/rol`, newRol, {
                             headers: { Authorization: `Bearer ${token}` }
                         })
     
@@ -485,7 +485,7 @@ const updateUser = async () => {
 // Elimnar usuario
 const deleteUser = async () => {
   try {
-    await axios.put(`http://localhost:3000/api/usuarios-miga/${user.value.id}/eliminar`, {}, {
+    await axios.put(`https://newjeans-back-production.up.railway.app/api/usuarios-miga/${user.value.id}/eliminar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -501,7 +501,7 @@ const deleteUser = async () => {
 // Restaurar usuario
 const restoreUser = async () => {
   try {
-    await axios.put(`http://localhost:3000/api/usuarios-miga/${user.value.id}/restaurar`, {}, {
+    await axios.put(`https://newjeans-back-production.up.railway.app/api/usuarios-miga/${user.value.id}/restaurar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -518,7 +518,7 @@ const restoreUser = async () => {
 // Restaurar usuario por ID
 const restoreUserById = async (id) => {
   try {
-    await axios.put(`http://localhost:3000/api/usuarios-miga/${id}/restaurar`, {}, {
+    await axios.put(`https://newjeans-back-production.up.railway.app/api/usuarios-miga/${id}/restaurar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
 

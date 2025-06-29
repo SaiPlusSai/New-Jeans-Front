@@ -385,10 +385,13 @@ const childTriggered = () => {
       <!-- Resultados de búsqueda -->
       <v-row v-if="docs.length > 0">
         <v-col cols="12">
-          <v-card variant="outlined" class="mb-4">
-            <v-card-title>Documentos disponibles</v-card-title>
-            <v-card-text>
-              <v-list>
+          <v-card variant="outlined" class="card-documentos mb-4">
+            <v-card-title class="titulo-card">
+              Documentos disponibles
+            </v-card-title>
+
+            <v-card-text class="contenido-card">
+              <v-list class="lista-scrollable">
                 <v-list-item
                   v-for="doc in docsVisibles"
                   :key="doc.codigo"
@@ -583,6 +586,31 @@ const childTriggered = () => {
   background: linear-gradient(145deg, #f5f7fa, #e4e8f0);
   min-height: 100vh;
   padding: 2rem;
+}
+
+.card-documentos {
+  height: 400px; /* altura total del card */
+  display: flex;
+  flex-direction: column;
+}
+
+.titulo-card {
+  flex: 0 0 auto;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding-bottom: 8px;
+}
+
+.contenido-card {
+  flex: 1 1 auto;
+  overflow: hidden; /* evita desbordes */
+  padding: 0 16px;
+}
+
+.lista-scrollable {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 8px; /* espacio para scrollbar */
 }
 
 .v-card {

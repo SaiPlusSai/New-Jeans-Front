@@ -139,6 +139,16 @@
         <v-list-item v-if="isLogged" @click="logout()" to="/">
           <v-list-item-title>Cerrar sesión</v-list-item-title>
         </v-list-item>
+
+        <v-list-item v-if="!isLogged" to="/register">
+          <v-list-item-icon><v-icon>mdi-account-plus</v-icon></v-list-item-icon>
+          <v-list-item-title>Registrarse</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="isLogged" to="/cambiar">
+          <v-list-item-icon><v-icon>mdi-lock-reset</v-icon></v-list-item-icon>
+          <v-list-item-title>Cambiar contraseña</v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 

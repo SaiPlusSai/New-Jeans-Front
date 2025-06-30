@@ -6,20 +6,30 @@
       <form @submit.prevent="cambiarContrasenia">
         <div class="login-input">
           <input
-            type="password"
+            :type="verActual ? 'text' : 'password'"
             v-model="actual"
             placeholder="Contraseña actual"
             required
           />
+          <button type="button" class="ver-btn" @click="verActual = !verActual">
+            <span class="material-icons">
+              {{ verActual ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
         </div>
 
         <div class="login-input">
           <input
-            type="password"
+            :type="verNueva ? 'text' : 'password'"
             v-model="nueva"
             placeholder="Nueva contraseña"
             required
           />
+          <button type="button" class="ver-btn" @click="verNueva = !verNueva">
+            <span class="material-icons">
+              {{ verNueva ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
         </div>
 
         <button class="login-btn" type="submit" :disabled="cargando">
@@ -39,6 +49,9 @@ import { ref } from 'vue'
 
 const actual = ref('')
 const nueva = ref('')
+const verActual = ref(false)
+const verNueva = ref(false)
+
 const mensaje = ref('')
 const exito = ref(false)
 const cargando = ref(false)
@@ -49,7 +62,7 @@ const cambiarContrasenia = async () => {
   exito.value = false
 
   try {
-    const token = localStorage.getItem('token') // Ajusta si usas Vuex/Pinia
+    const token = localStorage.getItem('token')
 
     const response = await fetch('https://newjeans-back-production.up.railway.app/api/usuarios/cambiar-contrasenia', {
       method: 'PATCH',
@@ -83,6 +96,7 @@ const cambiarContrasenia = async () => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 .login-container {
   height: 100vh;
@@ -116,9 +130,13 @@ const cambiarContrasenia = async () => {
   text-shadow: 0 1px 2px #ddd;
 }
 
+.login-input {
+  position: relative;
+}
+
 .login-input input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px 40px 12px 14px;
   margin-bottom: 14px;
   border-radius: 10px;
   border: 1.5px solid #e1bee7;
@@ -132,6 +150,17 @@ const cambiarContrasenia = async () => {
   border-color: #ce93d8;
   background-color: #fce4ec;
   outline: none;
+}
+
+.ver-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7b1fa2;
+  font-size: 1.5rem;
 }
 
 .login-btn {

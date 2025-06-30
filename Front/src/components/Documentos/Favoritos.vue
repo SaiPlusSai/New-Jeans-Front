@@ -1,16 +1,52 @@
 <template>
-
-<v-container>
+  <v-container>
     <v-row justify="center">
-            <h1>Documentos MIGA Favoritos</h1>
+      <h1>Documentos MIGA Favoritos</h1>
     </v-row>
+
+    <!-- FILTROS ESTILIZADOS -->
+    <v-row class="mb-6 px-2 py-3 rounded-lg" style="background-color: #f5f5f5;" dense>
+      <v-col cols="12" md="4">
+        <v-select
+          v-model="filtros.tipo"
+          :items="tiposDocumento"
+          label="Tipo de documento"
+          clearable
+          variant="outlined"
+          density="comfortable"
+          color="indigo"
+          class="rounded"
+        />
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field
+          v-model="filtros.palabra"
+          label="Palabra clave"
+          clearable
+          variant="outlined"
+          density="comfortable"
+          color="indigo"
+          class="rounded"
+        />
+      </v-col>
+      <v-col cols="12" md="2" class="d-flex align-end">
+        <v-btn color="indigo-darken-2" @click="buscarFavoritos" class="mr-2" elevation="2">
+          <v-icon left>mdi-magnify</v-icon>Buscar
+        </v-btn>
+        <v-btn text color="grey-darken-1" @click="limpiarFiltros">
+          Limpiar
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <!-- LISTA DE DOCUMENTOS -->
     <v-row>
       <div v-if="isFavsNull">No tienes documentos favoritos.</div>
-        <v-col
-          v-for="(doc) in docs"
-          :key="doc.codigo"
-          cols="12"
-        >
+      <v-col
+        v-for="(doc) in docs"
+        :key="doc.codigo"
+        cols="12"
+      >
         <v-card outlined>
           <v-card-title>{{ doc.codigo }}: {{ doc.descripcion }}</v-card-title>
           <v-card-subtitle>{{ doc.fuente }}</v-card-subtitle>
@@ -25,35 +61,34 @@
             <p>Relevancia: {{ doc.relevancia }}</p>
             <p>Conceptos CPE: {{ doc.conceptos_cpe }}</p>
             <p>Aplicación: {{ doc.aplicacion || '---'}}</p>
-            <p>Creador por: {{ doc.creado_por_nombre || 'Anónimo'}}</p>
+            <p>Creado por: {{ doc.creado_por_nombre || 'Anónimo' }}</p>
             <p v-if="doc.vigente === 1">Vigente</p>
             <p v-if="doc.vigente === 0">No está vigente</p>
           </v-card-text>
           <v-card-actions>
             <v-btn
-                elevation="0"
-                icon
-                class="favorite-btn"
-                @click="deleteFavorite(doc.codigo)"
-                :aria-label="'Eliminar de Favoritos'"
+              elevation="0"
+              icon
+              class="favorite-btn"
+              @click="deleteFavorite(doc.codigo)"
+              :aria-label="'Eliminar de Favoritos'"
             >
-                <v-icon color="yellow">
-                {{ 'mdi-star' }}
-                </v-icon>
+              <v-icon color="yellow">mdi-star</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
-        <v-col>
-            <v-snackbar v-model="snackbar" color="red" timeout="3000">
-                {{ snackbarContent }}
-            </v-snackbar>
-        </v-col>
-    </v-row>
-</v-container>
 
+    <!-- SNACKBAR -->
+    <v-row>
+      <v-col>
+        <v-snackbar v-model="snackbar" color="red" timeout="3000">
+          {{ snackbarContent }}
+        </v-snackbar>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
@@ -64,8 +99,23 @@ const docs = ref([]);
 const snackbar = ref(false);
 const snackbarContent = ref('');
 const token = localStorage.getItem('token');
-var isFavsNull = ref(false);
-console.log(token);
+const isFavsNull = ref(false);
+
+const filtros = ref({
+  tipo: '',
+  palabra: '',
+});
+
+const tiposDocumento = [
+  'ley',
+  'decreto',
+  'resolucion',
+  'norma',
+  'resolucion_municipal',
+  'plan',
+  'programa',
+  'otro'
+];
 
 const fetchFavs = async () => {
   try {
@@ -74,14 +124,37 @@ const fetchFavs = async () => {
         Authorization: `Bearer ${token}`
         }
     });
-    
-    if(response.data.length === 0){
-      isFavsNull.value = true;
-    }
     docs.value = response.data;
+    isFavsNull.value = response.data.length === 0;
   } catch (error) {
     console.error('Error al obtener documentos:', error);
   }
+};
+
+const buscarFavoritos = async () => {
+  try {
+    const params = {};
+    if (filtros.value.tipo) params.tipo = filtros.value.tipo;
+    if (filtros.value.palabra) params.palabra = filtros.value.palabra;
+
+    const response = await axios.get('http://localhost:3000/api/favoritos/buscar', {
+      headers: { Authorization: `Bearer ${token}` },
+      params
+    });
+
+    docs.value = response.data;
+    isFavsNull.value = response.data.length === 0;
+  } catch (error) {
+    console.error('Error al buscar favoritos:', error);
+  }
+};
+
+const limpiarFiltros = () => {
+  filtros.value = {
+    tipo: '',
+    palabra: '',
+  };
+  fetchFavs();
 };
 
 const deleteFavorite = async (codigo) => {
@@ -97,10 +170,9 @@ const deleteFavorite = async (codigo) => {
         console.error('Error al eliminar de favoritos:', error);
     }
     fetchFavs();
-};
+  };
 
 onMounted(() => {
-    fetchFavs();
+  fetchFavs();
 });
-
 </script>

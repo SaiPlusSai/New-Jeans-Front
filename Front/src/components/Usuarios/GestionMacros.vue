@@ -99,12 +99,15 @@
       </template>
     </v-snackbar>
   </v-container>
+  <Zonas />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+
+import Zonas from '@/components/Usuarios/GestionZonas.vue'
 
 const router = useRouter()
 const token = localStorage.getItem('token')

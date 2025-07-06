@@ -84,111 +84,155 @@
         <v-form ref="targetUser" @submit.prevent="editing ? updateUser() : registerUser()">
             <v-row dense>
             <v-col cols="12" sm="6">
-                <v-text-field 
-                class="input"
-                v-model="user.apellidop" 
-                label="Apellido paterno del usuario *" 
-                :rules="[v => !!v || 'Apellido paterno es requerido']"
-                hint="Ejemplo: Carrasco"
-                persistent-hint
-                required
-                />
+              <v-text-field 
+              class="input"
+              v-model="user.apellidop" 
+              label="Apellido paterno del usuario *" 
+              :rules="[v => !!v || 'Apellido paterno es requerido']"
+              hint="Ejemplo: Carrasco"
+              persistent-hint
+              required
+              />
             </v-col>
             <v-col cols="12" sm="6">
-                <v-text-field 
-                class="input"
-                v-model="user.apellidom" 
-                label="Apellido materno del usuario *" 
-                :rules="[v => !!v || 'Apellido materno es requerido']"
-                hint="Ejemplo: Flores"
-                persistent-hint
-                required
-                />
+              <v-text-field 
+              class="input"
+              v-model="user.apellidom" 
+              label="Apellido materno del usuario *" 
+              :rules="[v => !!v || 'Apellido materno es requerido']"
+              hint="Ejemplo: Flores"
+              persistent-hint
+              required
+              />
             </v-col>
             <v-col cols="12" sm="6">
-                <v-text-field 
-                class="input"
-                v-model="user.nombres" 
-                label="Nombre/s del usuario *" 
-                :rules="[v => !!v || 'Nombre/s es requerido']"
-                hint="Ejemplo: José María"
-                persistent-hint
-                required
-                />
+              <v-text-field 
+              class="input"
+              v-model="user.nombres" 
+              label="Nombre/s del usuario *" 
+              :rules="[v => !!v || 'Nombre/s es requerido']"
+              hint="Ejemplo: José María"
+              persistent-hint
+              required
+              />
             </v-col>
             <v-col cols="12" sm="6">
-                <v-text-field 
-                class="input"
-                type="number"
-                v-model="user.carnet_ci" 
-                label="Carnet de identidad del usuario *" 
-                :rules="[v => !!v || 'Carnet de identidad es requerido']"
-                required
-                />
+              <v-text-field 
+              class="input"
+              type="number"
+              v-model="user.carnet_ci" 
+              label="Carnet de identidad del usuario *" 
+              :rules="[v => !!v || 'Carnet de identidad es requerido']"
+              required
+              />
             </v-col>
-            <v-col v-if="editing" cols="12" sm="5">
-                <v-text-field 
-                class="input"
-                v-model="user.Usuario_defecto" 
-                label="Nombre de usuario *" 
-                :rules="[
-                    v => !!v || 'Usuario es requerido']"
-                hint="Ejemplo: jose.carrasco"
-                persistent-hint
-                required
-                />
+            <v-col v-if="editing" cols="12" sm="4">
+              <v-text-field 
+              class="input"
+              v-model="user.Usuario_defecto" 
+              label="Nombre de usuario *" 
+              :rules="[
+                  v => !!v || 'Usuario es requerido']"
+              hint="Ejemplo: jose.carrasco"
+              persistent-hint
+              required
+              />
             </v-col>
-            <v-col cols="12" sm="7">
-                <v-text-field 
-                class="input"
-                v-model="user.correo" 
-                label="Correo del usuario (opcional)" 
-                :rules="[
-                    v => !v || /.+@.+\..+/.test(v) || 'El correo no es válido']"
-                hint="Ejemplo: ejemplo@gmail.com"
-                persistent-hint
-                required
-                />
+            <v-col cols="12" :sm="editing ? 8 : 12">
+              <v-text-field 
+              class="input"
+              v-model="user.correo" 
+              label="Correo del usuario (opcional)" 
+              :rules="[
+                  v => !v || /.+@.+\..+/.test(v) || 'El correo no es válido']"
+              hint="Ejemplo: ejemplo@gmail.com"
+              persistent-hint
+              required
+              />
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select 
+              class="input"
+              v-model="user.macrodistrito_id" 
+              :items="macrodistritos"
+              item-title="nombre"
+              item-value="id"
+              label="Macrodistrito" 
+              :rules="[v => !!v || 'Macrodistrito es requerido']"
+              hint="El macrodistrito al que pertenece el usuario"
+              persistent-hint
+              required
+              />
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select 
+              class="input"
+              v-model="user.zona_id" 
+              :items="zonas"
+              item-title="nombre_zona"
+              item-value="id"
+              label="Zona" 
+              :rules="[v => !!v || 'Zona es requerida']"
+              hint="La zona a la que pertenece el usuario"
+              persistent-hint
+              required
+              :loading="loading"
+              :disabled="!user.macrodistrito_id"
+              />
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select 
+              class="input"
+              v-model="user.ambitoactividad_id" 
+              :items="ambitos"
+              item-title="nombre"
+              item-value="id"
+              label="Ámbito de actividad" 
+              :rules="[v => !!v || 'Ámbito de actividad es requerido']"
+              hint="El Ámbito de actividad del usuario"
+              persistent-hint
+              required
+              />
             </v-col>
             <v-col v-if="!editing && isMiga" cols="12" sm="6">
-                <v-text-field 
-                class="input"
-                :type="showPassword1 ? 'text' : 'password'"
-                :append-inner-icon="showPassword1 ? 'mdi-eye-off' : 'mdi-eye'"
-                @click:append-inner="showPassword1 = !showPassword1"
-                v-model="user.contraseña" 
-                label="Contraseña del usuario *" 
-                :rules="[
-                    v => !!v || 'Contraseña es requerido',
-                    v => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres']"
-                required
-                />
+              <v-text-field 
+              class="input"
+              :type="showPassword1 ? 'text' : 'password'"
+              :append-inner-icon="showPassword1 ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPassword1 = !showPassword1"
+              v-model="user.contraseña" 
+              label="Contraseña del usuario *" 
+              :rules="[
+                  v => !!v || 'Contraseña es requerido',
+                  v => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres']"
+              required
+              />
             </v-col>
             <v-col v-if="!editing && isMiga" cols="12" sm="6">
-                <v-text-field 
-                class="input"
-                :type="showPassword2 ? 'text' : 'password'"
-                :append-inner-icon="showPassword2 ? 'mdi-eye-off' : 'mdi-eye'"
-                @click:append-inner="showPassword2 = !showPassword2"
-                v-model="confirmPass"
-                label="Confirme la contraseña *" 
-                :rules="[
-                    v => !!v || 'Contraseña es requerido',
-                    v => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
-                    v => v === user.contraseña || 'Las contraseñas no coinciden']"
-                hint="Vuelva a escribir la contraseña para confirmar"
-                persistent-hint
-                required
-                />
+              <v-text-field 
+              class="input"
+              :type="showPassword2 ? 'text' : 'password'"
+              :append-inner-icon="showPassword2 ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPassword2 = !showPassword2"
+              v-model="confirmPass"
+              label="Confirme la contraseña *" 
+              :rules="[
+                  v => !!v || 'Contraseña es requerido',
+                  v => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
+                  v => v === user.contraseña || 'Las contraseñas no coinciden']"
+              hint="Vuelva a escribir la contraseña para confirmar"
+              persistent-hint
+              required
+              />
             </v-col>
             <v-col cols="12">
-                <v-checkbox 
-                class="input"
-                v-model="isMiga" 
-                label="¿Es un usuario MIGA?"
-                hint="Indica si el usuario tiene permisos de usuarios MIGA"
-                persistent-hint
-                />
+              <v-checkbox 
+              class="input"
+              v-model="isMiga" 
+              label="¿Es un usuario MIGA?"
+              hint="Indica si el usuario tiene permisos de usuarios MIGA"
+              persistent-hint
+              />
             </v-col>
             </v-row>
 
@@ -307,12 +351,11 @@
         <v-btn variant="text" @click="snackbar = false">Cerrar</v-btn>
       </template>
     </v-snackbar>
-
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
@@ -328,7 +371,10 @@ const user = ref({
   correo: '',
   contraseña: '',
   rol: '',
-  Usuario_defecto: ''
+  Usuario_defecto: '',
+  macrodistrito_id: null,
+  zona_id: null,
+  ambitoactividad_id: null
 })
 
 const snackbar = ref(false)
@@ -349,6 +395,10 @@ const confirmPass = ref('')
 const onlyMiga = ref(false)
 const isMiga = ref(false)
 const searchWord = ref('')
+
+const macrodistritos = ref([])
+const zonas = ref([])
+const ambitos = ref([])
 
 // Verificar rol del perfil
 const verifyUser = async () => {
@@ -422,10 +472,25 @@ const showOnlyMiga = async () => {
 // Seleccionar usuario
 const pickUser = async (u) => {
   Object.assign(user.value, u)
+  user.value.macrodistrito_id = macrodistritos.value.find((macro) => macro.nombre === u.macrodistrito_nombre).id
+  await waitForLoading()
+  user.value.zona_id = zonas.value.find((zonas) => zonas.nombre_zona === u.nombre_zona).id
+  user.value.ambitoactividad_id = ambitos.value.find((ambito) => ambito.nombre === u.ambito_nombre).id
   isMiga.value = user.value.rol === 'COMUNIDAD' ? false : true
   editing.value = true
   deletedUser.value = u.eliminado || false
   targetUser.value.scrollIntoView({ behavior: 'smooth' })
+}
+
+function waitForLoading() {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (!loading.value) {
+        clearInterval(interval)
+        resolve()
+      }
+    }, 50)
+  })
 }
 
 // Insertar usuario nuevo
@@ -439,6 +504,9 @@ const registerUser = async () => {
       apellidom: user.value.apellidom,
       carnet_ci: user.value.carnet_ci,
       correo: user.value.correo === '' ? null : user.value.correo,
+      macrodistrito_id: user.value.macrodistrito_id,
+      zona_id: user.value.zona_id,
+      ambitoactividad_id: user.value.ambitoactividad_id,
       contraseña: user.value.contraseña,
     }
     let response, message
@@ -486,6 +554,9 @@ const updateUser = async () => {
       apellidom: user.value.apellidom,
       carnet_ci: user.value.carnet_ci,
       correo: user.value.correo,
+      macrodistrito_id: user.value.macrodistrito_id,
+      zona_id: user.value.zona_id,
+      ambitoactividad_id: user.value.ambitoactividad_id,
       Usuario_defecto: user.value.Usuario_defecto
     }
     const response1 = await axios.patch(`http://localhost:3000/api/usuarios/${user.value.id}`, updatedData, {
@@ -617,6 +688,55 @@ const searchUsers = async () => {
   }
 }
 
+const loadMacros = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/macrodistritos")
+
+    macrodistritos.value = res.data
+
+  } catch (error) {
+    error.value = "Error al conectar con el servidor";
+    handleError(error);
+  }
+}
+
+watch(() => user.value.macrodistrito_id, async (newMacro) => {
+  if (newMacro) {
+    await loadZonas(newMacro)
+    user.value.zona_id = null
+  } else {
+    zonas.value = []
+  }
+})
+
+const loadZonas = async(idMacro) => {  
+  loading.value = true
+
+  try {
+    const res = await axios.get(`http://localhost:3000/api/macrodistrito/${idMacro}/zonas`)
+
+    zonas.value = res.data
+
+  } catch (error) {
+    error.value = "Error al conectar con el servidor";
+    handleError(error);
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadAmbitos = async() => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/ambitos")
+
+    ambitos.value = res.data
+
+  } catch (error) {
+    error.value = "Error al conectar con el servidor";
+    handleError(error);
+  }
+}
+
 // Helpers
 const resetForm = () => {
   user.value = {
@@ -655,6 +775,8 @@ onMounted(() => {
   verifyUser()
   loadUsers()
   loadDeleted()
+  loadMacros()
+  loadAmbitos()
 })
 
 </script>

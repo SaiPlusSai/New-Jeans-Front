@@ -1,9 +1,9 @@
 <script setup>
-import GestionUsuarios from '../components/GestionUsuarios.vue'
+import Usuarios from '../components/Usuarios/Usuarios.vue'
 </script>
 
 <template>
   <main>
-    <GestionUsuarios />
+    <Usuarios />
   </main>
 </template>

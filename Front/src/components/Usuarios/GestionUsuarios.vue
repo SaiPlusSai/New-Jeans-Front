@@ -649,7 +649,7 @@ const searchUsers = async () => {
     loading.value = true
     try {
       const encodedWord = encodeURIComponent(searchWord.value)
-      const url = `http://localhost:3000/api/usuarios/buscar-identificador?valor=${encodedWord}`
+      const url = `https://newjeans-back-production.up.railway.app/api/usuarios/buscar-identificador?valor=${encodedWord}`
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -669,7 +669,7 @@ const searchUsers = async () => {
     loading.value = true
     try {
       const encodedWord = encodeURIComponent(searchWord.value)
-      const url = `http://localhost:3000/api/usuarios/buscar-google?frase=${encodedWord}`
+      const url = `https://newjeans-back-production.up.railway.app/api/usuarios/buscar-google?frase=${encodedWord}`
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -690,7 +690,7 @@ const searchUsers = async () => {
 
 const loadMacros = async () => {
   try {
-    const res = await axios.get("http://localhost:3000/api/macrodistritos")
+    const res = await axios.get("https://newjeans-back-production.up.railway.app/api/macrodistritos")
 
     macrodistritos.value = res.data
 
@@ -713,7 +713,7 @@ const loadZonas = async(idMacro) => {
   loading.value = true
 
   try {
-    const res = await axios.get(`http://localhost:3000/api/macrodistrito/${idMacro}/zonas`)
+    const res = await axios.get(`https://newjeans-back-production.up.railway.app/api/macrodistrito/${idMacro}/zonas`)
 
     zonas.value = res.data
 
@@ -727,7 +727,7 @@ const loadZonas = async(idMacro) => {
 
 const loadAmbitos = async() => {
   try {
-    const res = await axios.get("http://localhost:3000/api/ambitos")
+    const res = await axios.get("https://newjeans-back-production.up.railway.app/api/ambitos")
 
     ambitos.value = res.data
 

@@ -198,7 +198,7 @@ const buscarPropuestas = async () => {
     const token = localStorage.getItem('token')
     let res
     if (notLogged.value) {
-      res = await axios.get('/api/propuestas-inteligente/buscar-titulo-descripcion-publicas', {
+      res = await axios.get('/api/propuestas-inteligente/buscar-titulo-descripcion', {
         params: { palabra: filtroTexto.value.trim(), frase: filtroTexto.value.trim() }
       })
     } else if (esMIGA.value) {

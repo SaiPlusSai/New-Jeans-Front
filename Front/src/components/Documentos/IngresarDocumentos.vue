@@ -44,7 +44,7 @@ const tiposDocumento = [
   'Resolución',
   'Plan',
   'Norma',
-  'Resolución_Municipal',
+  'Resolucion_Municipal',
   'Otro'
 ]
 

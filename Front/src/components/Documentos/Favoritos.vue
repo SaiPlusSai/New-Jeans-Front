@@ -119,7 +119,7 @@ const tiposDocumento = [
 
 const fetchFavs = async () => {
   try {
-    const response = await axios.get('https://newjeans-back-production.up.railway.app/api/favoritos', {
+    const response = await axios.get('http://localhost:3000/api/favoritos', {
         headers: {
         Authorization: `Bearer ${token}`
         }
@@ -159,7 +159,7 @@ const limpiarFiltros = () => {
 
 const deleteFavorite = async (codigo) => {
     try {
-        const response = await axios.delete(`https://newjeans-back-production.up.railway.app/api/favoritos/${codigo}`, {
+        const response = await axios.delete(`http://localhost:3000/api/favoritos/${codigo}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

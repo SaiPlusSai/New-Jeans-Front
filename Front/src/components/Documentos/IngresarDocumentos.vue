@@ -197,6 +197,7 @@ const actualizarDocumento = async () => {
   try {
     const datosActualizacion = {
       tipo: documento.value.tipo,
+      fuente: documento.value.fuente,
       descripcion: documento.value.descripcion,
       relevancia: documento.value.relevancia,
       anio: documento.value.anio,

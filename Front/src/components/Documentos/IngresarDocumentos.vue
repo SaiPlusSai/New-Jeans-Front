@@ -197,6 +197,7 @@ const actualizarDocumento = async () => {
   try {
     const datosActualizacion = {
       tipo: documento.value.tipo,
+      fuente: documento.value.fuente,
       descripcion: documento.value.descripcion,
       relevancia: documento.value.relevancia,
       anio: documento.value.anio,
@@ -365,7 +366,7 @@ const childTriggered = () => {
                         clearable
                         :rules="[
                           v => !!v || 'Año es requerido',
-                          v => (v >= 2000 && v <= new Date().getFullYear()) || 'Año inválido'
+                          v => (v >= 1800 && v <= new Date().getFullYear()) || 'Año inválido'
                         ]"
                         ></v-text-field>
                     </v-form>

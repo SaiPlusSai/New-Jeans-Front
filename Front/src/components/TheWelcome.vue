@@ -37,10 +37,10 @@
   <section class="carousel-section">
     <div class="carousel">
       <div class="carousel-track">
-        <img src="https://www.urgente.bo/sites/default/files/79174b49-25bf-4fbe-9795-f0965aa7172a_0.jpg" alt="Frutas" />
-        <img src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/482220959_983164950592201_6431649538134000164_n.jpg" alt="Verduras" />
-        <img src="https://hemeroteca.larazon.bo/wp-content/uploads/2025/02/DESAYUNO-ESCOLAR-AMUN.jpg" alt="Agua" />
-        <img src="https://laprensa.bo/sites/default/files/styles/imagen_content/public/portadas/2025-01/Captura%20de%20pantalla%202025-01-14%201.jpg.webp" alt="Desayuno" />
+        <img src="" alt="" />
+        <img src="" alt="" />
+        <img src="" alt="" />
+        <img src="" alt="" />
       </div>
     </div>
   </section>
@@ -78,19 +78,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const tarjetas = ref([
   {
-    titulo: 'Tradición y Futuro',
-    texto: 'Promueve una alimentación saludable conectada con nuestras raíces y cultura.',
-    img: 'https://cdn.pixabay.com/photo/2020/02/14/08/11/bolivia-4845928_1280.jpg'
+    titulo: '',
+    texto: '',
+    img: null
   },
   {
-    titulo: 'Educación Lúdica',
-    texto: 'Materiales inspirados en Los MIGAFONOS para enseñar jugando a niñas y niños.',
-    img: 'https://cdn.pixabay.com/photo/2018/02/01/15/50/child-3120179_1280.jpg'
+    titulo: '',
+    texto: '',
+    img: null
   },
   {
-    titulo: 'Enfoque Integral',
-    texto: 'Nutrimos con alimentos, saberes y valores para transformar el presente.',
-    img: 'https://cdn.pixabay.com/photo/2021/09/07/13/34/community-6604559_1280.jpg'
+    titulo: '',
+    texto: '',
+    img: null
   }
 ])
 

@@ -37,10 +37,10 @@
   <section class="carousel-section">
     <div class="carousel">
       <div class="carousel-track">
-        <img src="" alt="" />
-        <img src="" alt="" />
-        <img src="" alt="" />
-        <img src="" alt="" />
+        <img src="https://i.pinimg.com/1200x/22/89/de/2289de69552b868ce2ea4bc8ceda7bc4.jpg" alt="" />
+        <img src="https://i.pinimg.com/736x/74/61/25/7461255c3c20188fb8216e652886e8d2.jpg" alt="" />
+        <img src="https://i.pinimg.com/736x/68/32/a7/6832a787da21b17644f006737198a015.jpg" alt="" />
+        <img src="https://i.pinimg.com/1200x/8a/39/0e/8a390ed2764412ce66cb88cfb2546606.jpg" alt="" />
       </div>
     </div>
   </section>
@@ -78,19 +78,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const tarjetas = ref([
   {
-    titulo: '',
-    texto: '',
-    img: null
+    titulo: 'Tradición y Futuro',
+    texto: 'Promueve una alimentación saludable conectada con nuestras raíces y cultura.',
+    img: 'https://i.pinimg.com/736x/a9/c7/d0/a9c7d0ac584cf10317e5bc4c5cfbe084.jpg'
   },
   {
-    titulo: '',
-    texto: '',
-    img: null
+    titulo: 'Educación Lúdica',
+    texto: 'Materiales inspirados en Los MIGAFONOS para enseñar jugando a niñas y niños.',
+    img: 'https://i.pinimg.com/1200x/2c/23/c4/2c23c4802a041f9e42bfe2b66967482e.jpg'
   },
   {
-    titulo: '',
-    texto: '',
-    img: null
+    titulo: 'Enfoque Integral',
+    texto: 'Nutrimos con alimentos, saberes y valores para transformar el presente.',
+    img: 'https://i.pinimg.com/736x/c1/6b/f9/c16bf944b66f05c9bebb7fc9ec06a6e9.jpg'
   }
 ])
 

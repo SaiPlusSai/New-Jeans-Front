@@ -14,7 +14,7 @@ const login = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.post('https://newjeans-back-production.up.railway.app/api/usuarios/login', {
+    const res = await axios.post('https://newjeans-back.onrender.com/api/usuarios/login', {
       correo: correo.value,
       contraseña: contraseña.value
     })

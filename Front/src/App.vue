@@ -14,7 +14,7 @@
     try {
       isLogged.value = true;
 
-      const res = await axios.get('https://newjeans-back-production.up.railway.app/api/usuarios/perfil', {
+      const res = await axios.get('https://newjeans-back.onrender.com/api/usuarios/perfil', {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -82,7 +82,7 @@ export default {
   methods: {
     async registrarUsuario() {
       try {
-      const res = await fetch("https://newjeans-back-production.up.railway.app/api/usuarios/registro-comunidad", {
+      const res = await fetch("https://newjeans-back.onrender.com/api/usuarios/registro-comunidad", {
           method: "POST",
           headers: {
           "Content-Type": "application/json"
@@ -105,7 +105,7 @@ export default {
 
     async cargarMacros() {
       try {
-        const res = await fetch("https://newjeans-back-production.up.railway.app/api/macrodistritos", {
+        const res = await fetch("https://newjeans-back.onrender.com/api/macrodistritos", {
             method: "GET"
         });
 
@@ -126,7 +126,7 @@ export default {
       this.loading = true
 
       try {
-        const res = await fetch(`https://newjeans-back-production.up.railway.app/api/macrodistrito/${idMacro}/zonas`, {
+        const res = await fetch(`https://newjeans-back.onrender.com/api/macrodistrito/${idMacro}/zonas`, {
             method: "GET"
         });
 
@@ -142,7 +142,7 @@ export default {
 
     async cargarAmbitos() {
       try {
-        const res = await fetch("https://newjeans-back-production.up.railway.app/api/ambitos", {
+        const res = await fetch("https://newjeans-back.onrender.com/api/ambitos", {
             method: "GET"
         });
 

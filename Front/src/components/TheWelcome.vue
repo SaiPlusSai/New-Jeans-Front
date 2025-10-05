@@ -1,74 +1,144 @@
 <template>
-  <section class="intro-section">
-    <svg class="blob-bg" viewBox="0 0 600 600">
-      <g transform="translate(300,300)">
-        <path d="M120,-172.3C160.2,-141.5,194.7,-106.3,202.5,-67.9C210.2,-29.4,191.1,12.4,172.7,54.6C154.2,96.9,136.5,139.7,105.3,158.6C74.2,177.4,29.6,172.3,-11.1,176.6C-51.9,181,-103.7,194.8,-134.8,178.8C-165.9,162.9,-176.3,117.2,-178.1,76.3C-180,35.4,-173.3,-0.8,-166.7,-42.7C-160.2,-84.6,-153.8,-132.3,-123.4,-168.8C-93,-205.3,-39,-230.7,5.2,-237.8C49.4,-244.9,98.7,-233.2,120,-172.3Z" fill="#fcdce1"/>
-      </g>
-    </svg>
-    <h1>Los MIGAFONOS: Escuelas que nutren</h1>
-    <p>
-      Este sistema forma parte de la iniciativa <strong>"Los MIGAFONOS: Escuelas que nutren"</strong>, que promueve la <strong>alimentación saludable, soberana y sostenible</strong> desde una mirada integral.
-    </p>
-    <p>
-      Inspirado en la serie infantil <em>Los MIGAFONOS</em>, busca sensibilizar a la comunidad educativa y autoridades a través de herramientas lúdicas que integran <strong>saberes, cultura y bienestar</strong>.
-    </p>
-    <p>
-      Este sistema refuerza el componente de <strong>incidencia pública</strong>, facilitando el acceso a normativas y conocimientos clave.
-    </p>
-    <a class="cta-button" href="https://miga.org.bo/" target="_blank">Conocer más sobre MIGA</a>
-  </section>
+  <v-container>
+    <v-row class="justify-center text-center">
+      <h1>“Escuelas que nutren”</h1>
+    </v-row>
+    <v-row class="mt-8 align-center">
+      <v-col cols="12" sm="5">
+        <v-img src="/assets/MIGA_EscuelasQueNutren.png" maxHeight="350"></v-img>
+      </v-col>
+      <v-col cols="12" sm="7">
+        <h2>¿De qué trata el proyecto?</h2>
+        <p>
+          El proyecto “Sembrando Saberes y Sabores – Escuelas que Nutren”
+          tiene como objetivo que los niñas y niños aprendan a alimentarse de
+          forma saludable y con identidad boliviana.
 
-  <section class="highlight-section">
-    <div class="wrapper">
-      <ul class="text-lines">
-        <li>
-          <span class="letter" v-for="l in 'Alimentación'" :key="l"><span>{{ l }}</span><span>{{ l }}</span></span>
-        </li>
-        <li>
-          <span class="letter" v-for="l in 'Saludable'" :key="l"><span>{{ l }}</span><span>{{ l }}</span></span>
-        </li>
-        <li>
-          <span class="letter" v-for="l in 'Estudiantil'" :key="l"><span>{{ l }}</span><span>{{ l }}</span></span>
-        </li>
-      </ul>
-    </div>
-  </section>
+          Con la ayuda de los MIGAFONOS, una serie infantil creada por MIGA,
+          la escuela se convierte en un espacio divertido para hablar de
+          alimentos locales, nutrición y cultura. Al mismo tiempo, madres,
+          padres y docentes fortalecen su rol como guardianes de la
+          alimentación, compartiendo saberes y mejorando las meriendas
+          escolares, en entorno al Patrimonio Alimentario.
+        </p>
+      </v-col>
+    </v-row>
+    <v-row class="align-center">
+      <v-col cols="12" sm="7">
+        <h2>¿Quiénes son los MIGAFONOS?</h2>
+        <p>
+          MIGAFONOS es una herramienta de educación alimentaria.
 
-  <section class="carousel-section">
-    <div class="carousel">
-      <div class="carousel-track">
-        <img src="https://i.pinimg.com/1200x/22/89/de/2289de69552b868ce2ea4bc8ceda7bc4.jpg" alt="" />
-        <img src="https://i.pinimg.com/736x/74/61/25/7461255c3c20188fb8216e652886e8d2.jpg" alt="" />
-        <img src="https://i.pinimg.com/736x/68/32/a7/6832a787da21b17644f006737198a015.jpg" alt="" />
-        <img src="https://i.pinimg.com/1200x/8a/39/0e/8a390ed2764412ce66cb88cfb2546606.jpg" alt="" />
-      </div>
-    </div>
-  </section>
+          Esta propuesta lúdica cobra vida a través de una banda de música conformada por amigos Asaí, Chilto, 
+          Isaño y Muña. Desde un inicio, querían ser una banda de rock, y gracias a la ayuda de una vecina, 
+          una abuelita que los adoptó como sus nietos, deciden hacer música original, moderna, pero con un toque tradicional boliviano.
+        </p>
+      </v-col>
+      <v-col cols="12" sm="5">
+        <v-img src="/assets/MIGA_Migafonos.png" maxHeight="300"></v-img>
+      </v-col>
+    </v-row>
+    <v-row class="pa-8" justify="center">
+      <v-btn class="btn ma-2" :href="'https://miga.org.bo/'" target="_blank"><strong>Conoce sobre MIGA</strong></v-btn>
+      <v-btn class="btn ma-2" :href="'https://www.facebook.com/migaboliviaong'" target="_blank"><strong>Siguenos en Redes Sociales</strong></v-btn>
+    </v-row>
 
-  <section class="cards-section">
-    <h2 class="section-title">Descubre los beneficios</h2>
-    <div class="card-container">
+    <v-row class="pt-8 pb-4" justify="center">
+      <h2>Objetivos del Proyecto</h2>
+    </v-row>
+    <v-row>
+      <v-col class="d-flex justify-end" cols="12" sm="6">
+        <v-card class="card-square">
+          <v-card-text class="align-center card-square-text" style="padding-right: 72px;">
+            Sensibilizar y capacitar en alimentación saludable.
+          </v-card-text>
+          <div class="color-square-right" style="background-color: #b7c8dd;"></div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-card class="card-square">
+          <div class="color-square-left" style="background-color: #d1dab3;"></div>
+          <v-card-text class="align-center card-square-text" style="padding-left: 72px;">
+             Fortalecer el rol de las mujeres como guardianas de la alimentación.
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="d-flex justify-end" cols="12" sm="6">
+        <v-card class="card-square">
+          <v-card-text class="card-square-text align-center" style="padding-right: 72px;">
+            Escuelas como agentes de cambio en buenas prácticas alimentarias.
+          </v-card-text>
+          <div class="color-square-right" style="background-color: #e6d1e2;"></div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-card class="card-square">
+          <div class="color-square-left" style="background-color: #f9b5a9;"></div>
+          <v-card-text class="align-center card-square-text" style="padding-left: 72px;">
+             Articulación con políticas públicas para incidir en el desarrollo local.
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row  class="pt-8 pb-4" justify="center">
+      <h2>Alcance del Proyecto</h2>
+    </v-row>
+    <v-row>
+      <v-col cols="12" sm=6>
+        <p>UNIDADES EDUCATIVAS</p>
+        <ul>
+          <li class="list-item">Faro Murillo.</li>
+          <li class="list-item">José Santos Vargas.</li>
+          <li class="list-item">Marcelo Quiroga Santa Cruz.</li>
+          <li class="list-item">Luis Espinal Camps.</li>
+          <li class="list-item">Jaime Escalante.</li>
+        </ul>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <ul>
+          <li class="list-item">Comunidad Educativa
+            <ul>
+              <li class="list-item2">250 niños/niñas de 6to de primaria</li>
+              <li class="list-item2">25 maestros/maestras</li>
+              <li class="list-item2">5 directoras</li>
+            </ul>
+          </li>
+          <li class="list-item">Guardianas de la alimentación
+            <ul>
+              <li class="list-item2">60 mujeres/varones del entorno educativo</li>
+            </ul>
+          </li>
+          <li class="list-item">Actores en incidencia de politica pública
+            <ul>
+              <li class="list-item2">30 autoridades locales, representantes de las comunidades educativas</li>
+            </ul>
+          </li>
+        </ul>
+      </v-col>
+    </v-row>
+    <v-row class="pt-8">
+      <h2>Grupo meta y resultados</h2>
+    </v-row>
+    <v-row class="cards-section">
+      <div class="card-container">
       <div class="flip-card" v-for="item in tarjetas" :key="item.titulo">
         <div class="flip-inner">
           <div class="flip-front">
             <h3>{{ item.titulo }}</h3>
-            <img :src="item.img" :alt="item.titulo" />
+            <ul>
+              <li v-for="text in item.texto" :key="item.texto" class="list-item-card">{{ text }}</li>
+            </ul>
           </div>
           <div class="flip-back">
-            <p>{{ item.texto }}</p>
+            <img :src="item.img" class="img-card"/>
           </div>
         </div>
       </div>
     </div>
-  </section>
-
-  <section class="scroll-section">
-    <div class="scrolling-container">
-      <div class="scrolling-text">
-        El municipio de La Paz complementa con normas que aplican en comunidades educativas y puede ir adicionando en el tiempo con las que se aprueben. Las comunidades escolares requieren acceder a esta normativa para identificar aspectos a cumplir según sus proyectos y entornos alimentarios saludables. La academia de MIGA puede usar este módulo para compartir conocimiento normativo relevante.
-      </div>
-    </div>
-  </section>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
@@ -78,19 +148,30 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const tarjetas = ref([
   {
-    titulo: 'Tradición y Futuro',
-    texto: 'Promueve una alimentación saludable conectada con nuestras raíces y cultura.',
-    img: 'https://i.pinimg.com/736x/a9/c7/d0/a9c7d0ac584cf10317e5bc4c5cfbe084.jpg'
+    titulo: 'Fortalecimiento de conocimientos en alimentación saludable y patrimonio alimentario',
+    texto: [
+      'Niñas, niños, maestras, directores, responsables de kiosko y actores del entorno educativo adquieren herramientas para elegir y promover una alimentación nutritiva, diversa y arraigada en el Patrimonio Alimentario.',
+      'Se fortalecen hábitos que no solo previenen la malnutrición, sino que también promueven bienestar, identidad cultural y valoración de lo nuestro.'
+    ],
+    img: '/assets/MIGA_Card1.png'
   },
   {
-    titulo: 'Educación Lúdica',
-    texto: 'Materiales inspirados en Los MIGAFONOS para enseñar jugando a niñas y niños.',
-    img: 'https://i.pinimg.com/1200x/2c/23/c4/2c23c4802a041f9e42bfe2b66967482e.jpg'
+    titulo: 'Revalorización de saberes locales y protagonismo de las mujeres',
+    texto: [
+      'Las Guardianas de la Alimentación son reconocidas como referentes comunitarias.',
+      'Se fomenta el orgullo por los saberes ancestrales y la transmisión intergeneracional.',
+      'Mujeres fortalecidas en su rol educativo, económico y cultural.'
+    ],
+    img: '/assets/MIGA_Card2.png'
   },
   {
-    titulo: 'Enfoque Integral',
-    texto: 'Nutrimos con alimentos, saberes y valores para transformar el presente.',
-    img: 'https://i.pinimg.com/736x/c1/6b/f9/c16bf944b66f05c9bebb7fc9ec06a6e9.jpg'
+    titulo: 'Escuelas como agentes de cambio e incidencia en políticas públicas',
+    texto: [
+      'Las unidades educativas se consolidan como espacios que promueven prácticas alimentarias saludables.',
+      'La experiencia escolar aporta insumos y evidencia para articular acciones con políticas locales y nacionales de alimentación.',
+      'Se sientan bases para la sostenibilidad y escalamiento del modelo.'
+    ],
+    img: '/assets/MIGA_Card3.png'
   }
 ])
 
@@ -125,6 +206,7 @@ onMounted(() => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
   margin: 0;
@@ -133,136 +215,88 @@ body {
   color: #3b3b3b;
 }
 
-/* Intro */
-.intro-section {
-  position: relative;
-  text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #FFE6BB 0%, #FCDCE1 100%);
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-  margin: 2rem auto;
-  max-width: 1000px;
-  z-index: 1;
-}
-
-.blob-bg {
-  position: absolute;
-  top: -100px;
-  left: -100px;
-  width: 900px;
-  height: 900px;
-  z-index: -1;
-  opacity: 0.12;
-}
-
-.intro-section h1 {
-  color: #A64E7A;
-  font-size: 2.5rem;
-  margin-bottom: 1.2rem;
-  font-weight: 700;
-}
-
-.intro-section p {
-  font-size: 1.1rem;
-  margin-bottom: 0.8rem;
-  line-height: 1.6;
-}
-
-.cta-button {
-  display: inline-block;
-  background-color: #E9D8FD;
-  color: #4B0082;
-  padding: 0.75rem 1.5rem;
-  border-radius: 999px;
+h1{
+  font-family: 'Montserrat', sans-serif;
   font-weight: bold;
-  margin-top: 1rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: xx-large;
 }
 
-.cta-button:hover {
-  background-color: #d7c3f3;
-  transform: scale(1.05);
+h2{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: x-large;
+  padding-bottom: 10px;
 }
 
-/* Letras flotantes */
-.wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  width: 100%;
-  overflow: hidden;
-  margin-top: 2rem;
+p{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: larger;
+  text-align: justify;
 }
 
-.text-lines {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: clamp(2rem, 8vw, 6rem);
-  line-height: 1;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  color: #A64E7A;
+.list-item{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: larger;
+  text-align: justify;
+  margin-left: 20px;
 }
 
-li {
-  display: flex;
-  overflow: hidden;
+.list-item2{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: large;
+  text-align: justify;
+  margin-left: 20px;
 }
 
-.letter {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 1em;
-  line-height: 1em;
-  overflow: hidden;
-  font-family: 'Impact', Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+.img-card{
+  max-width: 300;
 }
 
-.letter span {
-  display: block;
-  text-align: center;
-  height: 1em;
-}
-
-/* Carrusel */
-.carousel {
-  width: 100%;
-  max-width: 800px;
-  height: 400px;
-  overflow: hidden;
+.btn{
+  background: linear-gradient(135deg, #f6d365, #fda085);
+  font-family: "Quicksand", sans-serif;
+  font-size: medium;
   border-radius: 20px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-  margin: 3rem auto 1rem auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-width: 150px;
+  min-height: 100%;
 }
 
-.carousel-track {
-  display: flex;
-  width: 400%;
-  animation: slide 16s infinite ease-in-out;
-}
-
-.carousel-track img {
+.card-square{
+  font-family: 'Quicksand', sans-serif;
+  text-align: center;
+  background-color: #faf0e6;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  flex-shrink: 0;
+  height: 70px;
 }
 
-@keyframes slide {
-  0%, 20% { transform: translateX(0%); }
-  25%, 45% { transform: translateX(-100%); }
-  50%, 70% { transform: translateX(-200%); }
-  75%, 95% { transform: translateX(-300%); }
-  100% { transform: translateX(0%); }
+.card-square-text{
+  font-weight: bolder; 
+  font-size: small; 
+}
+
+@media (min-width: 1024px){
+  .card-square-text{
+    font-size: medium;
+  }
+}
+
+.color-square-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 100%;
+}
+
+.color-square-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70px;
+  height: 100%;
 }
 
 /* Flip Cards */
@@ -271,13 +305,13 @@ li {
   justify-content: center;
   flex-wrap: wrap;
   gap: 2rem;
-  margin: 4rem auto;
+  margin: 2rem auto 4rem auto;
   max-width: 1200px;
 }
 
 .flip-card {
-  width: 250px;
-  height: 300px;
+  width: 350px;
+  height: 450px;
   perspective: 1000px;
 }
 
@@ -305,31 +339,23 @@ li {
 }
 
 .flip-front {
-  background: #CFE6F7;
+  background: #f4f6f6;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  justify-content: start;
   color: #1f2937;
-  padding: 1rem;
+  padding: 25px;
 }
 
-.flip-front h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1.3rem;
-}
-
-.flip-front img {
-  width: 100%;
-  height: 70%;
-  object-fit: cover;
+.flip-back img {
+  object-fit: contain;
   border-radius: 10px;
-  margin-top: 0.5rem;
+  width: 320px;
 }
 
 .flip-back {
-  background: #D2F5E3;
-  color: #4b5563;
+  background: #f4f6f6;
+  color: #1f2937;
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
@@ -339,32 +365,19 @@ li {
   font-size: 1rem;
 }
 
-/* Texto horizontal animado */
-.scrolling-container {
-  width: 100%;
-  overflow: hidden;
-  background: linear-gradient(to right, #FFE6BB, #FCDCE1);
-  border-top: 2px solid #FBCFE8;
-  border-bottom: 2px solid #FBCFE8;
-  padding: 1rem 0;
-  position: relative;
+h3{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: medium;
+  padding-bottom: 15px;
 }
 
-.scrolling-text {
-  display: inline-block;
-  white-space: nowrap;
-  animation: scroll-left 60s linear infinite;
-  color: #3b3b3b;
-  font-size: 1.1rem;
-  padding-left: 100%;
-}
-
-@keyframes scroll-left {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
-}
-
-.scrolling-container:hover .scrolling-text {
-  animation-play-state: paused;
+.list-item-card{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: medium;
+  text-align: justify;
+  margin-left: 20px;
+  text-align: justify;
 }
 </style>

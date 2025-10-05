@@ -157,10 +157,49 @@
         <RouterView />
       </v-container>
     </v-main>
+
+    <v-footer class="footer">
+      <v-row>
+        <v-col class="pt-6" cols="12" sm="4">
+          <p>Financiado por:</p>
+          <v-row class="pt-6 justify-center align-center">
+            <v-btn class="logo-btn" variant="plain" :href="'https://cooperacion.asturias.es/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/agenciaAsturiana_logo.png"/>
+            </v-btn>
+            <v-btn class="logo-btn" variant="plain" :href="'https://www.asturias.es/ast/inicio'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/GobiernodelPrincipadodeAsturias_logo.png"/>
+            </v-btn>
+            <v-btn class="logo-btn" variant="plain" :href="'https://www.fundacionadsis.org/es'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/fundacionAdsis_logo.png"/>
+            </v-btn>
+          </v-row>
+        </v-col>
+        <v-col class="pt-6" cols="12" sm="4">
+          <p>Implementado por:</p>
+          <v-row class="pt-6 justify-center align-center">
+            <v-btn class="logo-btn" variant="plain" :href="'https://miga.org.bo/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/miga_logo.png"/>
+            </v-btn>
+          </v-row>
+        </v-col>
+        <v-col class="pt-6" cols="12" sm="4">
+          <p>Con el apoyo de:</p>
+          <v-row class="pt-6 justify-center align-center">
+            <v-btn class="logo-btn" variant="plain" :href="'https://www.ucb.edu.bo/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/ucb_logo.png"/>
+            </v-btn>
+            <v-btn class="logo-btn" variant="plain" :href="'https://sis-ucb.online/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/sis_logo.png"/>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @keyframes softBackground {
   0% { background-position: 0% 50%; }
@@ -206,7 +245,7 @@
 }
 
 .main-background {
-  background: linear-gradient(120deg, #fcd5ce, #f9dcc4, #e0f7fa, #e1eecb);
+  background: #e8dfd9;
   min-height: 100vh;
 }
 
@@ -229,4 +268,33 @@
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+.footer{
+  padding-top: 30px;
+  background-color: #e3d4c9;
+  height: 500px;
+  padding-bottom: 40px;
+}
+
+.footer p{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 900;
+  font-size: larger;
+  text-align: justify;
+  padding-bottom: 10px;
+}
+
+.logo-btn{
+  width: 30%;
+  min-height: 100px;
+  background-color: transparent;
+  border-radius: 20px;
+  margin: 5px;
+}
+
+.footer-img{
+  height: 100px;
+  width: 100px;
+}
+
 </style>

@@ -160,25 +160,37 @@
 
     <v-footer class="footer">
       <v-row>
-        <v-col cols="4">
+        <v-col class="pt-6" cols="12" sm="4">
           <p>Financiado por:</p>
-          <v-row class="pt-6">
-            <v-img class="footer-img" src="/assets/logos/agenciaAsturiana_logo.png"/>
-            <v-img class="footer-img" src="/assets/logos/GobiernodelPrincipadodeAsturias_logo.png"/>
-            <v-img class="footer-img" src="/assets/logos/fundacionAdsis_logo.png"/>
+          <v-row class="pt-6 justify-center align-center">
+            <v-btn class="logo-btn" variant="plain" :href="'https://cooperacion.asturias.es/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/agenciaAsturiana_logo.png"/>
+            </v-btn>
+            <v-btn class="logo-btn" variant="plain" :href="'https://www.asturias.es/ast/inicio'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/GobiernodelPrincipadodeAsturias_logo.png"/>
+            </v-btn>
+            <v-btn class="logo-btn" variant="plain" :href="'https://www.fundacionadsis.org/es'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/fundacionAdsis_logo.png"/>
+            </v-btn>
           </v-row>
         </v-col>
-        <v-col cols="4">
+        <v-col class="pt-6" cols="12" sm="4">
           <p>Implementado por:</p>
-          <v-row class="pt-6">
-            <v-img class="footer-img" src="/assets/logos/miga_logo.png"/>
+          <v-row class="pt-6 justify-center align-center">
+            <v-btn class="logo-btn" variant="plain" :href="'https://miga.org.bo/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/miga_logo.png"/>
+            </v-btn>
           </v-row>
         </v-col>
-        <v-col cols="4">
+        <v-col class="pt-6" cols="12" sm="4">
           <p>Con el apoyo de:</p>
-          <v-row class="pt-6">
-            <v-img class="footer-img" src="/assets/logos/ucb_logo.png"/>
-            <v-img class="footer-img" src="/assets/logos/sis_logo.png"/>\
+          <v-row class="pt-6 justify-center align-center">
+            <v-btn class="logo-btn" variant="plain" :href="'https://www.ucb.edu.bo/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/ucb_logo.png"/>
+            </v-btn>
+            <v-btn class="logo-btn" variant="plain" :href="'https://sis-ucb.online/'" target="_blank">
+              <v-img class="footer-img" src="/assets/logos/sis_logo.png"/>
+            </v-btn>
           </v-row>
         </v-col>
       </v-row>
@@ -266,11 +278,18 @@
 
 .footer p{
   font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
+  font-weight: 900;
   font-size: larger;
   text-align: justify;
   padding-bottom: 10px;
-  padding-left: 30px;
+}
+
+.logo-btn{
+  width: 30%;
+  min-height: 100px;
+  background-color: transparent;
+  border-radius: 20px;
+  margin: 5px;
 }
 
 .footer-img{

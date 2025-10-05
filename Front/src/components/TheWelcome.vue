@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="justify-center">
+    <v-row class="justify-center text-center">
       <h1>“Escuelas que nutren”</h1>
     </v-row>
     <v-row class="mt-8 align-center">
@@ -39,17 +39,17 @@
       </v-col>
     </v-row>
     <v-row class="pa-8" justify="center">
-      <v-btn small class="btn">Conoce sobre MIGA</v-btn>
-      <v-btn class="btn ml-8">Siguenos en Redes Sociales</v-btn>
+      <v-btn class="btn ma-2" :href="'https://miga.org.bo/'" target="_blank"><strong>Conoce sobre MIGA</strong></v-btn>
+      <v-btn class="btn ma-2" :href="'https://www.facebook.com/migaboliviaong'" target="_blank"><strong>Siguenos en Redes Sociales</strong></v-btn>
     </v-row>
 
-    <v-row class="pt-6" justify="center">
+    <v-row class="pt-8 pb-4" justify="center">
       <h2>Objetivos del Proyecto</h2>
     </v-row>
     <v-row>
       <v-col class="d-flex justify-end" cols="12" sm="6">
         <v-card class="card-square">
-          <v-card-text class="align-center" style="font-weight: bolder; font-size: medium; padding-right: 70px;">
+          <v-card-text class="align-center card-square-text" style="padding-right: 72px;">
             Sensibilizar y capacitar en alimentación saludable.
           </v-card-text>
           <div class="color-square-right" style="background-color: #b7c8dd;"></div>
@@ -58,7 +58,7 @@
       <v-col cols="12" sm="6">
         <v-card class="card-square">
           <div class="color-square-left" style="background-color: #d1dab3;"></div>
-          <v-card-text class="align-center" style="font-weight: bolder; font-size: medium; padding-left: 70px;">
+          <v-card-text class="align-center card-square-text" style="padding-left: 72px;">
              Fortalecer el rol de las mujeres como guardianas de la alimentación.
           </v-card-text>
         </v-card>
@@ -67,7 +67,7 @@
     <v-row>
       <v-col class="d-flex justify-end" cols="12" sm="6">
         <v-card class="card-square">
-          <v-card-text class="align-center" style="font-weight: bolder; font-size: medium; padding-right: 70px;">
+          <v-card-text class="card-square-text align-center" style="padding-right: 72px;">
             Escuelas como agentes de cambio en buenas prácticas alimentarias.
           </v-card-text>
           <div class="color-square-right" style="background-color: #e6d1e2;"></div>
@@ -76,13 +76,13 @@
       <v-col cols="12" sm="6">
         <v-card class="card-square">
           <div class="color-square-left" style="background-color: #f9b5a9;"></div>
-          <v-card-text class="align-center" style="font-weight: bolder; font-size: medium; padding-left: 70px;">
+          <v-card-text class="align-center card-square-text" style="padding-left: 72px;">
              Articulación con políticas públicas para incidir en el desarrollo local.
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-    <v-row  class="pt-8" justify="center">
+    <v-row  class="pt-8 pb-4" justify="center">
       <h2>Alcance del Proyecto</h2>
     </v-row>
     <v-row>
@@ -215,8 +215,6 @@ body {
   color: #3b3b3b;
 }
 
-/* Intro */
-
 h1{
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
@@ -259,18 +257,30 @@ p{
 
 .btn{
   background: linear-gradient(135deg, #f6d365, #fda085);
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 100;
-  font-size: large;
-  border-radius: 15px;
+  font-family: "Quicksand", sans-serif;
+  font-size: medium;
+  border-radius: 20px;
+  min-width: 150px;
+  min-height: 100%;
 }
 
 .card-square{
   font-family: 'Quicksand', sans-serif;
   text-align: center;
   background-color: #faf0e6;
-  width: 30vw;
+  width: 100%;
   height: 70px;
+}
+
+.card-square-text{
+  font-weight: bolder; 
+  font-size: small; 
+}
+
+@media (min-width: 1024px){
+  .card-square-text{
+    font-size: medium;
+  }
 }
 
 .color-square-right {
@@ -295,7 +305,7 @@ p{
   justify-content: center;
   flex-wrap: wrap;
   gap: 2rem;
-  margin: 4rem auto;
+  margin: 2rem auto 4rem auto;
   max-width: 1200px;
 }
 

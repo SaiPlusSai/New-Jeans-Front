@@ -157,10 +157,37 @@
         <RouterView />
       </v-container>
     </v-main>
+
+    <v-footer class="footer">
+      <v-row>
+        <v-col cols="4">
+          <p>Financiado por:</p>
+          <v-row class="pt-6">
+            <v-img class="footer-img" src="/assets/logos/agenciaAsturiana_logo.png"/>
+            <v-img class="footer-img" src="/assets/logos/GobiernodelPrincipadodeAsturias_logo.png"/>
+            <v-img class="footer-img" src="/assets/logos/fundacionAdsis_logo.png"/>
+          </v-row>
+        </v-col>
+        <v-col cols="4">
+          <p>Implementado por:</p>
+          <v-row class="pt-6">
+            <v-img class="footer-img" src="/assets/logos/miga_logo.png"/>
+          </v-row>
+        </v-col>
+        <v-col cols="4">
+          <p>Con el apoyo de:</p>
+          <v-row class="pt-6">
+            <v-img class="footer-img" src="/assets/logos/ucb_logo.png"/>
+            <v-img class="footer-img" src="/assets/logos/sis_logo.png"/>\
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @keyframes softBackground {
   0% { background-position: 0% 50%; }
@@ -206,7 +233,7 @@
 }
 
 .main-background {
-  background: linear-gradient(120deg, #fcd5ce, #f9dcc4, #e0f7fa, #e1eecb);
+  background: #e8dfd9;
   min-height: 100vh;
 }
 
@@ -229,4 +256,26 @@
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+.footer{
+  padding-top: 30px;
+  background-color: #e3d4c9;
+  height: 500px;
+  padding-bottom: 40px;
+}
+
+.footer p{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: larger;
+  text-align: justify;
+  padding-bottom: 10px;
+  padding-left: 30px;
+}
+
+.footer-img{
+  height: 100px;
+  width: 100px;
+}
+
 </style>

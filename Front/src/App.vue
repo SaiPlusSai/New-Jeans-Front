@@ -251,7 +251,7 @@
            <v-col cols="12" md="8" lg="6" class="mt-8">
               <v-list class="transparent-list">
                 <v-list-item class="member">Ing. Miguel Ángel Pacheco Arteaga</v-list-item>
-                <v-list-item class="member">Mgr. Lourdes Eulalia Peredo Quiroga</v-list-item>
+                <v-list-item class="member">Mgr. Lourdes Peredo Quiroga</v-list-item>
               </v-list>
           </v-col>
         </v-col>

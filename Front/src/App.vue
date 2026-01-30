@@ -48,48 +48,90 @@
       <v-app-bar-nav-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
       <v-row justify="center" align="center" no-gutters class="w-100 hidden-sm-and-down">
         <v-col cols="auto">
-          <v-btn class="nav-button btn1" to="/" exact tag="RouterLink">
-            <v-icon start>mdi-home</v-icon>Inicio
-          </v-btn>
-          <v-btn
-            v-if="isMiga"
-            class="nav-button btn2"
-            to="/TPS"
-            tag="RouterLink"
-          >
-            <v-icon start>mdi-gavel</v-icon>Leyes
-          </v-btn>
-          <v-btn class="nav-button btn4" to="/docs" tag="RouterLink">
-            <v-icon start>mdi-file-document</v-icon>Documentos
-          </v-btn>
-          <v-btn v-if="isLogged" class="nav-button btn5" to="/favs" tag="RouterLink">
-            <v-icon start>mdi-heart</v-icon>Favoritos
-          </v-btn>
-          <v-btn v-if="isMiga" class="nav-button btn6" to="/usuarios" tag="RouterLink">
-            <v-icon start>mdi-account</v-icon>Usuarios
-          </v-btn>
-          <v-btn v-if="isMiga" class="nav-button btn6" to="/reportes" tag="RouterLink">
-            <v-icon start>mdi-chart-bar</v-icon>Reportes
-          </v-btn>
-          <v-btn v-if="!isCommunity" class="nav-button btn7" to="/propuestas" tag="RouterLink">
-            <v-icon start>mdi-lightbulb-on</v-icon>Propuestas
-          </v-btn>
-          <v-btn v-else-if="isCommunity" class="nav-button btn7" to="/propuestas" tag="RouterLink">
-            <v-icon start>mdi-lightbulb-on</v-icon>Mis propuestas
-          </v-btn>
-          <v-btn v-if="!isLogged" class="nav-button btn3" to="/login" tag="RouterLink">
-            <v-icon start>mdi-login</v-icon>Login
-          </v-btn>
-          <v-btn v-if="!isLogged" class="nav-button btn3" to="/register" tag="RouterLink">
-            <v-icon start>mdi-account-plus</v-icon>
-            Registrarse
-          </v-btn>
-          <v-btn v-if="isLogged" class="nav-button btn8" @click="logout()" to="/" tag="RouterLink">
-            <v-icon start>mdi-login</v-icon>Cerrar sesión
-          </v-btn>
-          <v-btn v-if="isLogged" class="nav-button btn8" to="/cambiar" tag="RouterLink">
-            <v-icon start>mdi-lock-reset</v-icon> Cambiar contraseña
-          </v-btn>
+          <v-tooltip text="Ir al inicio" location="bottom">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn1" to="/" exact tag="RouterLink">
+                <v-icon start>mdi-home</v-icon>Inicio
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Ver leyes y normativas" location="bottom" v-if="isMiga">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn2" to="/TPS" tag="RouterLink">
+                <v-icon start>mdi-gavel</v-icon>Leyes
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Aquí podrá acceder a todas las normativas organizadas y clasificadas para su consulta." location="bottom">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn4" to="/docs" tag="RouterLink">
+                <v-icon start>mdi-file-document</v-icon>Documentos
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Espacio para guardar y acceder rápidamente a los documentos más relevantes según su interés." location="bottom" v-if="isLogged">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn5" to="/favs" tag="RouterLink">
+                <v-icon start>mdi-heart</v-icon>Favoritos
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Gestionar usuarios registrados" location="bottom" v-if="isMiga">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn6" to="/usuarios" tag="RouterLink">
+                <v-icon start>mdi-account</v-icon>Usuarios
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Ver estadísticas y reportes del sistema" location="bottom" v-if="isMiga">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn6" to="/reportes" tag="RouterLink">
+                <v-icon start>mdi-chart-bar</v-icon>Reportes
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Sección destinada a la presentación y consulta de nuevas ideas o iniciativas relacionadas con la alimentación saludable." location="bottom" v-if="!isCommunity">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn7" to="/propuestas" tag="RouterLink">
+                <v-icon start>mdi-lightbulb-on</v-icon>Propuestas
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Ver tus propuestas enviadas" location="bottom" v-else-if="isCommunity">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn7" to="/propuestas" tag="RouterLink">
+                <v-icon start>mdi-lightbulb-on</v-icon>Mis propuestas
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Área de acceso para usuarios registrados, que les permitirá gestionar sus favoritos, propuestas y personalizar su experiencia en la plataforma." location="bottom" v-if="!isLogged">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn3" to="/login" tag="RouterLink">
+                <v-icon start>mdi-login</v-icon>Login
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Crear una nueva cuenta" location="bottom" v-if="!isLogged">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn3" to="/register" tag="RouterLink">
+                <v-icon start>mdi-account-plus</v-icon>Registrarse
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Cerrar sesión de tu cuenta actual" location="bottom" v-if="isLogged">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn8" @click="logout()" to="/" tag="RouterLink">
+                <v-icon start>mdi-login</v-icon>Cerrar sesión
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Actualizar tu contraseña" location="bottom" v-if="isLogged">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="nav-button btn8" to="/cambiar" tag="RouterLink">
+                <v-icon start>mdi-lock-reset</v-icon>Cambiar contraseña
+              </v-btn>
+            </template>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-app-bar>
@@ -192,6 +234,26 @@
               <v-img class="footer-img" src="/assets/logos/sis_logo.png"/>
             </v-btn>
           </v-row>
+        </v-col>
+        <v-col class="pt-6" cols="12" sm="4">
+          <p>Equipo Encargado del Proyecto</p>
+          <v-col cols="12" md="8" lg="6">
+              <v-list class="transparent-list">
+                <v-list-item class="member">Alina Mollinedo Dávila</v-list-item>
+                <v-list-item class="member">Raquel Osorio Mamani</v-list-item>
+                <v-list-item class="member">Jean Marco Fernández Silva</v-list-item>
+                <v-list-item class="member">Sergio Alejandro Arias Mayta</v-list-item>
+              </v-list>
+          </v-col>
+        </v-col>
+        <v-col class="pt-6" cols="12" sm="4">
+          <p>Supervisores del Proyecto</p>
+           <v-col cols="12" md="8" lg="6" class="mt-8">
+              <v-list class="transparent-list">
+                <v-list-item class="member">Ing. Miguel Ángel Pacheco Arteaga</v-list-item>
+                <v-list-item class="member">Mgr. Lourdes Peredo Quiroga</v-list-item>
+              </v-list>
+          </v-col>
         </v-col>
       </v-row>
     </v-footer>
@@ -297,4 +359,10 @@
   width: 100px;
 }
 
+.transparent-list {
+  background: transparent;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 900;
+  font-size: larger;
+}
 </style>

@@ -67,7 +67,7 @@ const jerarquias = [
 const obtenerPerfil = async () => {
   if (!token) return
   try {
-    const res = await axios.get('https://newjeans-back.onrender.com/api/usuarios/perfil', {
+    const res = await axios.get('https://normativa.miga.org.bo/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
     documento.value.creado_por = res.data.usuario.id
@@ -87,7 +87,7 @@ const buscarDocumentos = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.get('https://newjeans-back.onrender.com/api/documentos')
+    const res = await axios.get('https://normativa.miga.org.bo/api/documentos')
     docs.value = res.data
     docsVisibles.value = docs.value
   } catch (err) {
@@ -136,7 +136,7 @@ const aplicarFiltros = async () => {
 
     if(filtersString !== ''){
         try {
-            const url = `https://newjeans-back.onrender.com/api/buscar?${filtersString}`;
+            const url = `https://normativa.miga.org.bo/api/buscar?${filtersString}`;
             const response = await axios.get(url);
             docs.value = response.data;
             docsVisibles.value = docs.value
@@ -174,7 +174,7 @@ const registrarDocumento = async () => {
   error.value = ''
   loading.value = true
   try {
-    const response = await axios.post('https://newjeans-back.onrender.com/api/documentos/auto', documento.value, {
+    const response = await axios.post('https://normativa.miga.org.bo/api/documentos/auto', documento.value, {
       headers: { Authorization: `Bearer ${token}` }
     })
     
@@ -209,7 +209,7 @@ const actualizarDocumento = async () => {
       vigente: documento.value.vigente
     }
     
-    await axios.put(`https://newjeans-back.onrender.com/api/documentos/${documento.value.codigo}`, datosActualizacion, {
+    await axios.put(`https://normativa.miga.org.bo/api/documentos/${documento.value.codigo}`, datosActualizacion, {
       headers: { Authorization: `Bearer ${token}` }
     })
     mostrarSnackbar('Documento actualizado con éxito')
@@ -223,7 +223,7 @@ const actualizarDocumento = async () => {
 
 const eliminarDocumento = async () => {
   try {
-    await axios.delete(`https://newjeans-back.onrender.com/api/documentos/${documento.value.codigo}`, {
+    await axios.delete(`https://normativa.miga.org.bo/api/documentos/${documento.value.codigo}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     mostrarSnackbar('Documento eliminado correctamente')
@@ -237,7 +237,7 @@ const eliminarDocumento = async () => {
 
 const restaurarDocumento = async () => {
   try {
-    await axios.patch(`https://newjeans-back.onrender.com/api/documentos/${documento.value.codigo}/restaurar`, {}, {
+    await axios.patch(`https://normativa.miga.org.bo/api/documentos/${documento.value.codigo}/restaurar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
     mostrarSnackbar('Documento restaurado correctamente')

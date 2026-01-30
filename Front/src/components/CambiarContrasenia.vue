@@ -64,7 +64,7 @@ const cambiarContrasenia = async () => {
   try {
     const token = localStorage.getItem('token')
 
-    const response = await fetch('https://newjeans-back.onrender.com/api/usuarios/cambiar-contrasenia', {
+    const response = await fetch('https://normativa.miga.org.bo/api/usuarios/cambiar-contrasenia', {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,

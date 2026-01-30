@@ -14,7 +14,7 @@
     try {
       isLogged.value = true;
 
-      const res = await axios.get('https://newjeans-back.onrender.com/api/usuarios/perfil', {
+      const res = await axios.get('https://normativa.miga.org.bo/api/usuarios/perfil', {
         headers: { Authorization: `Bearer ${token}` }
       });
 

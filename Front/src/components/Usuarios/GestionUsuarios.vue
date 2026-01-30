@@ -404,7 +404,7 @@ const ambitos = ref([])
 const verifyUser = async () => {
   if (!token) return
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/usuarios/perfil', {
+    const res = await axios.get('/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -419,7 +419,7 @@ const loadUsers = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/usuarios-miga/todos', {
+    const res = await axios.get('/api/usuarios-miga/todos', {
             headers: { Authorization: `Bearer ${token}` }
         })
     users.value = res.data
@@ -436,7 +436,7 @@ const loadDeleted = async () => {
   error.value = ''
   loadingDel.value = true
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/usuarios-miga/eliminados', {
+    const res = await axios.get('/api/usuarios-miga/eliminados', {
             headers: { Authorization: `Bearer ${token}` }
         })
     deletedUsers.value = res.data
@@ -455,7 +455,7 @@ const showOnlyMiga = async () => {
         error.value = ''
         loading.value = true
         try {
-            const res = await axios.get('https://normativa.miga.org.bo/api/usuarios-miga/solo-miga', {
+            const res = await axios.get('/api/usuarios-miga/solo-miga', {
             headers: { Authorization: `Bearer ${token}` }
         })
             users.value = res.data
@@ -516,14 +516,14 @@ const registerUser = async () => {
         return
       }
       
-      response = await axios.post('https://normativa.miga.org.bo/api/usuarios-miga/registro-miga', newData, {
+      response = await axios.post('/api/usuarios-miga/registro-miga', newData, {
           headers: { Authorization: `Bearer ${token}` }
       })
       
       message = `${response.data.mensaje}: ${response.data.Usuario_defecto}.`
 
     } else {
-      response = await axios.post('https://normativa.miga.org.bo/api/usuarios/registro-comunidad', newData, {
+      response = await axios.post('/api/usuarios/registro-comunidad', newData, {
           headers: { Authorization: `Bearer ${token}` }
       })
 
@@ -559,14 +559,14 @@ const updateUser = async () => {
       ambitoactividad_id: user.value.ambitoactividad_id,
       Usuario_defecto: user.value.Usuario_defecto
     }
-    const response1 = await axios.patch(`https://normativa.miga.org.bo/api/usuarios/${user.value.id}`, updatedData, {
+    const response1 = await axios.patch(`/api/usuarios/${user.value.id}`, updatedData, {
                             headers: { Authorization: `Bearer ${token}` }
                         })
     
     const newRol = {
         nuevoRol: isMiga.value ? 'MIGA' : 'COMUNIDAD'
     }
-    const response2 = await axios.put(`https://normativa.miga.org.bo/api/usuarios-miga/${user.value.id}/rol`, newRol, {
+    const response2 = await axios.put(`/api/usuarios-miga/${user.value.id}/rol`, newRol, {
                             headers: { Authorization: `Bearer ${token}` }
                         })
     
@@ -583,7 +583,7 @@ const updateUser = async () => {
 // Elimnar usuario
 const deleteUser = async () => {
   try {
-    await axios.put(`https://normativa.miga.org.bo/api/usuarios-miga/${user.value.id}/eliminar`, {}, {
+    await axios.put(`/api/usuarios-miga/${user.value.id}/eliminar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -599,7 +599,7 @@ const deleteUser = async () => {
 // Restaurar usuario
 const restoreUser = async () => {
   try {
-    await axios.put(`https://normativa.miga.org.bo/api/usuarios-miga/${user.value.id}/restaurar`, {}, {
+    await axios.put(`/api/usuarios-miga/${user.value.id}/restaurar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -616,7 +616,7 @@ const restoreUser = async () => {
 // Restaurar usuario por ID
 const restoreUserById = async (id) => {
   try {
-    await axios.put(`https://normativa.miga.org.bo/api/usuarios-miga/${id}/restaurar`, {}, {
+    await axios.put(`/api/usuarios-miga/${id}/restaurar`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -649,7 +649,7 @@ const searchUsers = async () => {
     loading.value = true
     try {
       const encodedWord = encodeURIComponent(searchWord.value)
-      const url = `https://normativa.miga.org.bo/api/usuarios/buscar-identificador?valor=${encodedWord}`
+      const url = `/api/usuarios/buscar-identificador?valor=${encodedWord}`
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -669,7 +669,7 @@ const searchUsers = async () => {
     loading.value = true
     try {
       const encodedWord = encodeURIComponent(searchWord.value)
-      const url = `https://normativa.miga.org.bo/api/usuarios/buscar-google?frase=${encodedWord}`
+      const url = `/api/usuarios/buscar-google?frase=${encodedWord}`
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -690,7 +690,7 @@ const searchUsers = async () => {
 
 const loadMacros = async () => {
   try {
-    const res = await axios.get("https://normativa.miga.org.bo/api/macrodistritos")
+    const res = await axios.get("/api/macrodistritos")
 
     macrodistritos.value = res.data
 
@@ -713,7 +713,7 @@ const loadZonas = async(idMacro) => {
   loading.value = true
 
   try {
-    const res = await axios.get(`https://normativa.miga.org.bo/api/macrodistrito/${idMacro}/zonas`)
+    const res = await axios.get(`/api/macrodistrito/${idMacro}/zonas`)
 
     zonas.value = res.data
 
@@ -727,7 +727,7 @@ const loadZonas = async(idMacro) => {
 
 const loadAmbitos = async() => {
   try {
-    const res = await axios.get("https://normativa.miga.org.bo/api/ambitos")
+    const res = await axios.get("/api/ambitos")
 
     ambitos.value = res.data
 

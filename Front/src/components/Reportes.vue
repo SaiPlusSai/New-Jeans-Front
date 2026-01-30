@@ -136,7 +136,7 @@ console.log(token);
 
 const fetchConsultas = async () => {
   try {
-    const response = await axios.get('https://normativa.miga.org.bo/api/reportes/consultas', {
+    const response = await axios.get('/api/reportes/consultas', {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -149,7 +149,7 @@ const fetchConsultas = async () => {
 
 const fetchDocs = async () => {
   try {
-    const response = await axios.get('https://normativa.miga.org.bo/api/reportes/documentos', {
+    const response = await axios.get('/api/reportes/documentos', {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -167,7 +167,7 @@ const applyFilters = async () => {
     } else {
         if(selectedTipo.value != null){
             try {
-                const response = await axios.get(`https://normativa.miga.org.bo/api/reportes/documentos/tipo/${selectedTipo.value}`, {
+                const response = await axios.get(`/api/reportes/documentos/tipo/${selectedTipo.value}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -183,7 +183,7 @@ const applyFilters = async () => {
                 inputError.value = 'El año debe estar entre 2000 y 2024';
             } else {
                 try {
-                    const response = await axios.get(`https://normativa.miga.org.bo/api/reportes/documentos/anio/${searchAnio.value}`, {
+                    const response = await axios.get(`/api/reportes/documentos/anio/${searchAnio.value}`, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -209,7 +209,7 @@ const clearFilters = () => {
 
 const consultasPDF = async () => {
     try {
-        const response = await axios.get('https://normativa.miga.org.bo/api/reportes/pdf/consultas', {
+        const response = await axios.get('/api/reportes/pdf/consultas', {
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -236,7 +236,7 @@ const consultasPDF = async () => {
 const docsPDF = async () => {
     if(tipoFilter.value){
         try {
-            const response = await axios.get(`https://normativa.miga.org.bo/api/reportes/pdf/documentos/tipo/${selectedTipo.value}`, {
+            const response = await axios.get(`/api/reportes/pdf/documentos/tipo/${selectedTipo.value}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -260,7 +260,7 @@ const docsPDF = async () => {
         }
     } else if(anioFilter.value){
         try {
-            const response = await axios.get(`https://normativa.miga.org.bo/api/reportes/pdf/documentos/anio/${searchAnio.value}`, {
+            const response = await axios.get(`/api/reportes/pdf/documentos/anio/${searchAnio.value}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -284,7 +284,7 @@ const docsPDF = async () => {
         }
     } else {
         try {
-            const response = await axios.get('https://normativa.miga.org.bo/api/reportes/pdf/documentos', {
+            const response = await axios.get('/api/reportes/pdf/documentos', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },

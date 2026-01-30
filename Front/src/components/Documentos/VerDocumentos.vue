@@ -144,7 +144,7 @@ const inputError = ref('');
 
 const fetchDocs = async () => {
   try {
-    const response = await axios.get('https://normativa.miga.org.bo/api/documentos');
+    const response = await axios.get('/api/documentos');
     docs.value = response.data;
   } catch (error) {
     console.error('Error al obtener documentos:', error);
@@ -161,7 +161,7 @@ const searchDocs = async () => {
         if(searchWord.value.split(/\s+/).length === 1){
             try {
                 const encodedWord = encodeURIComponent(searchWord.value);
-                const url = `https://normativa.miga.org.bo/api/historial-busqueda?palabra=${encodedWord}`;
+                const url = `/api/historial-busqueda?palabra=${encodedWord}`;
                 const response = await axios.get(url);
                 docs.value = response.data;
                 if(docs.value.length === 0){
@@ -174,7 +174,7 @@ const searchDocs = async () => {
         } else {
             try {
                 const encodedWords = encodeURIComponent(searchWord.value);
-                const url = `https://normativa.miga.org.bo/api/historial-busqueda/google-like?frase=${encodedWords}`;
+                const url = `/api/historial-busqueda/google-like?frase=${encodedWords}`;
                 const response = await axios.get(url);
                 docs.value = response.data;
                 if(docs.value.length === 0){
@@ -223,7 +223,7 @@ const applyFilters = async () => {
 
     if(filtersString !== ''){
         try {
-            const url = `https://normativa.miga.org.bo/api/buscar?${filtersString}`;
+            const url = `/api/buscar?${filtersString}`;
             const response = await axios.get(url);
             docs.value = response.data;
             if(docs.value.length === 0){
@@ -251,7 +251,7 @@ console.log(token);
 
 const fetchFavs = async () => {
   try {
-    const response = await axios.get('https://normativa.miga.org.bo/api/favoritos', {
+    const response = await axios.get('/api/favoritos', {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -269,7 +269,7 @@ const isFavorite = (codigo) => {
 const toggleFavorite = async (codigo) => {
     if (isFavorite(codigo)) {
         try {
-            const response = await axios.delete(`https://normativa.miga.org.bo/api/favoritos/${codigo}`, {
+            const response = await axios.delete(`/api/favoritos/${codigo}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -281,7 +281,7 @@ const toggleFavorite = async (codigo) => {
         }
     } else {
         try {
-            const response = await axios.post(`https://normativa.miga.org.bo/api/favoritos/${codigo}`, {}, {
+            const response = await axios.post(`/api/favoritos/${codigo}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

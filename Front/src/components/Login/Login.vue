@@ -14,7 +14,7 @@ const login = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.post('https://normativa.miga.org.bo/api/usuarios/login', {
+    const res = await axios.post('/api/usuarios/login', {
       correo: correo.value,
       contraseña: contraseña.value
     })

@@ -5,7 +5,7 @@
     </v-row>
     <v-row class="mt-8 align-center">
       <v-col cols="12" sm="5">
-        <v-img src="/assets/MIGA_EscuelasQueNutren.png" maxHeight="350"></v-img>
+        <v-img :src="imgEscuelas" maxHeight="350"></v-img>
       </v-col>
       <v-col cols="12" sm="7">
         <h2>¿De qué trata el proyecto?</h2>
@@ -35,7 +35,7 @@
         </p>
       </v-col>
       <v-col cols="12" sm="5">
-        <v-img src="/assets/MIGA_Migafonos.png" maxHeight="300"></v-img>
+        <v-img :src="imgMigafonos" maxHeight="300"></v-img>
       </v-col>
     </v-row>
     <v-row class="pa-8" justify="center">
@@ -146,6 +146,12 @@ import { ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+import imgEscuelas from '@/assets/MIGA_EscuelasQueNutren.png'
+import imgMigafonos from '@/assets/MIGA_Migafonos.png'
+import card1 from '@/assets/MIGA_Card1.png'
+import card2 from '@/assets/MIGA_Card2.png'
+import card3 from '@/assets/MIGA_Card3.png'
+
 const tarjetas = ref([
   {
     titulo: 'Fortalecimiento de conocimientos en alimentación saludable y patrimonio alimentario',
@@ -153,7 +159,7 @@ const tarjetas = ref([
       'Niñas, niños, maestras, directores, responsables de kiosko y actores del entorno educativo adquieren herramientas para elegir y promover una alimentación nutritiva, diversa y arraigada en el Patrimonio Alimentario.',
       'Se fortalecen hábitos que no solo previenen la malnutrición, sino que también promueven bienestar, identidad cultural y valoración de lo nuestro.'
     ],
-    img: '/assets/MIGA_Card1.png'
+    img:card1
   },
   {
     titulo: 'Revalorización de saberes locales y protagonismo de las mujeres',
@@ -162,7 +168,7 @@ const tarjetas = ref([
       'Se fomenta el orgullo por los saberes ancestrales y la transmisión intergeneracional.',
       'Mujeres fortalecidas en su rol educativo, económico y cultural.'
     ],
-    img: '/assets/MIGA_Card2.png'
+    img:card2
   },
   {
     titulo: 'Escuelas como agentes de cambio e incidencia en políticas públicas',
@@ -171,7 +177,7 @@ const tarjetas = ref([
       'La experiencia escolar aporta insumos y evidencia para articular acciones con políticas locales y nacionales de alimentación.',
       'Se sientan bases para la sostenibilidad y escalamiento del modelo.'
     ],
-    img: '/assets/MIGA_Card3.png'
+    img:card3
   }
 ])
 

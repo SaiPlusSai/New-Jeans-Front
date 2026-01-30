@@ -119,7 +119,7 @@ const tiposDocumento = [
 
 const fetchFavs = async () => {
   try {
-    const response = await axios.get('https://normativa.miga.org.bo/api/favoritos', {
+    const response = await axios.get('/api/favoritos', {
         headers: {
         Authorization: `Bearer ${token}`
         }
@@ -137,7 +137,7 @@ const buscarFavoritos = async () => {
     if (filtros.value.tipo) params.tipo = filtros.value.tipo;
     if (filtros.value.palabra) params.palabra = filtros.value.palabra;
 
-    const response = await axios.get('https://normativa.miga.org.bo/api/favoritos/buscar', {
+    const response = await axios.get('/api/favoritos/buscar', {
       headers: { Authorization: `Bearer ${token}` },
       params
     });
@@ -159,7 +159,7 @@ const limpiarFiltros = () => {
 
 const deleteFavorite = async (codigo) => {
     try {
-        const response = await axios.delete(`https://normativa.miga.org.bo/api/favoritos/${codigo}`, {
+        const response = await axios.delete(`/api/favoritos/${codigo}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

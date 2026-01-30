@@ -85,7 +85,7 @@ export default {
       // Obtener el token guardado (ajusta según tu implementación)
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       
-      const response = await fetch('https://normativa.miga.org.bo/api/documentos/eliminados', {
+      const response = await fetch('/api/documentos/eliminados', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ export default {
       console.log(codigo)
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       
-      const response = await fetch(`https://normativa.miga.org.bo/api/documentos/${codigo}/restaurar`, {
+      const response = await fetch(`/api/documentos/${codigo}/restaurar`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

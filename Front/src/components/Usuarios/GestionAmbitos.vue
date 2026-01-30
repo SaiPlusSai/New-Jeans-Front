@@ -111,7 +111,7 @@ const ambitos = ref([])
 const verifyUser = async () => {
   if (!token) return
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/usuarios/perfil', {
+    const res = await axios.get('/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -126,7 +126,7 @@ const loadAmbitos = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/ambitos', {
+    const res = await axios.get('/api/ambitos', {
             headers: { Authorization: `Bearer ${token}` }
         })
     ambitos.value = res.data
@@ -153,7 +153,7 @@ const registerAmbito = async () => {
       nombre: ambito.value.nombre,
     }
 
-    const response = await axios.post('https://normativa.miga.org.bo/api/ambitos', newData, {
+    const response = await axios.post('/api/ambitos', newData, {
         headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -178,7 +178,7 @@ const updateAmbito = async () => {
     const updatedData = {
       nombre: ambito.value.nombre
     }
-    const response = await axios.put(`https://normativa.miga.org.bo/api/ambitos/${ambito.value.id}`, updatedData, {
+    const response = await axios.put(`/api/ambitos/${ambito.value.id}`, updatedData, {
                             headers: { Authorization: `Bearer ${token}` }
                         })
     
@@ -195,7 +195,7 @@ const updateAmbito = async () => {
 // Elimnar ámbito de actividad
 const deleteAmbito = async () => {
   try {
-    const response = await axios.delete(`https://normativa.miga.org.bo/api/ambitos/${ambito.value.id}`, {
+    const response = await axios.delete(`/api/ambitos/${ambito.value.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     showSnackbar(`${response.data.mensaje}`)

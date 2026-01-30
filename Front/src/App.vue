@@ -2,7 +2,12 @@
   import { RouterLink, RouterView } from 'vue-router'
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
-
+  import logoAsturias from '@/assets/logos/agenciaAsturiana_logo.png'
+  import logoGobAsturias from '@/assets/logos/GobiernodelPrincipadodeAsturias_logo.png'
+  import logoAdsis from '@/assets/logos/fundacionAdsis_logo.png'
+  import logoMiga from '@/assets/logos/miga_logo.png'
+  import logoUcb from '@/assets/logos/ucb_logo.png'
+  import logoSis from '@/assets/logos/sis_logo.png'
   const drawer = ref(false);
 
   const isLogged = ref(false);
@@ -14,7 +19,7 @@
     try {
       isLogged.value = true;
 
-      const res = await axios.get('https://normativa.miga.org.bo/api/usuarios/perfil', {
+      const res = await axios.get('/api/usuarios/perfil', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -206,13 +211,13 @@
           <p>Financiado por:</p>
           <v-row class="pt-6 justify-center align-center">
             <v-btn class="logo-btn" variant="plain" :href="'https://cooperacion.asturias.es/'" target="_blank">
-              <v-img class="footer-img" src="/assets/logos/agenciaAsturiana_logo.png"/>
+              <v-img class="footer-img" :src="logoAsturias"/>
             </v-btn>
             <v-btn class="logo-btn" variant="plain" :href="'https://www.asturias.es/ast/inicio'" target="_blank">
-              <v-img class="footer-img" src="/assets/logos/GobiernodelPrincipadodeAsturias_logo.png"/>
+              <v-img class="footer-img" :src="logoGobAsturias"/>
             </v-btn>
             <v-btn class="logo-btn" variant="plain" :href="'https://www.fundacionadsis.org/es'" target="_blank">
-              <v-img class="footer-img" src="/assets/logos/fundacionAdsis_logo.png"/>
+              <v-img class="footer-img" :src="logoAdsis"/>
             </v-btn>
           </v-row>
         </v-col>
@@ -220,7 +225,7 @@
           <p>Implementado por:</p>
           <v-row class="pt-6 justify-center align-center">
             <v-btn class="logo-btn" variant="plain" :href="'https://miga.org.bo/'" target="_blank">
-              <v-img class="footer-img" src="/assets/logos/miga_logo.png"/>
+              <v-img class="footer-img" :src="logoMiga"/>
             </v-btn>
           </v-row>
         </v-col>
@@ -228,10 +233,11 @@
           <p>Con el apoyo de:</p>
           <v-row class="pt-6 justify-center align-center">
             <v-btn class="logo-btn" variant="plain" :href="'https://www.ucb.edu.bo/'" target="_blank">
-              <v-img class="footer-img" src="/assets/logos/ucb_logo.png"/>
+              <v-img class="footer-img" :src="logoUcb"/>
             </v-btn>
             <v-btn class="logo-btn" variant="plain" :href="'https://sis-ucb.online/'" target="_blank">
-              <v-img class="footer-img" src="/assets/logos/sis_logo.png"/>
+              <v-img class="footer-img" :src="logoSis"/>
+              
             </v-btn>
           </v-row>
         </v-col>

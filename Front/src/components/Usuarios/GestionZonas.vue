@@ -119,7 +119,7 @@ const showSnackbar = (mensaje) => {
 const loadMacros = async () => {
   loadingMacros.value = true
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/macrodistritos', {
+    const res = await axios.get('/api/macrodistritos', {
       headers: { Authorization: `Bearer ${token}` }
     })
     macros.value = res.data
@@ -139,7 +139,7 @@ const cargarZonas = async () => {
   if (!selectedMacroId.value?.id) return
 
   try {
-    const res = await axios.get(`https://normativa.miga.org.bo/api/macrodistrito/${selectedMacroId.value.id}/zonas`, {
+    const res = await axios.get(`/api/macrodistrito/${selectedMacroId.value.id}/zonas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     zonas.value = res.data.filter(z => z.eliminado === 0)
@@ -154,7 +154,7 @@ const cargarZonas = async () => {
 // Cargar zonas eliminadas
 const cargarZonasEliminadas = async () => {
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/zonas', {
+    const res = await axios.get('/api/zonas', {
       headers: { Authorization: `Bearer ${token}` }
     })
     zonasEliminadas.value = res.data.filter(z => z.eliminado === 1)
@@ -173,7 +173,7 @@ const crearZona = async () => {
       nombre: nuevaZona.value.trim()
     }
 
-    const res = await axios.post('https://normativa.miga.org.bo/api/zonas', data, {
+    const res = await axios.post('/api/zonas', data, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -195,7 +195,7 @@ const crearZona = async () => {
 // Actualizar zona
 const actualizarZona = async (id, nuevoNombre) => {
   try {
-    const res = await axios.put(`https://normativa.miga.org.bo/api/zonas/${id}`, {
+    const res = await axios.put(`/api/zonas/${id}`, {
       nombre: nuevoNombre
     }, {
       headers: { Authorization: `Bearer ${token}` }
@@ -210,7 +210,7 @@ const actualizarZona = async (id, nuevoNombre) => {
 // Restaurar zona eliminada
 const restaurarZona = async (zona) => {
   try {
-    const res = await axios.put(`https://normativa.miga.org.bo/api/zonas/${zona.id}`, {
+    const res = await axios.put(`/api/zonas/${zona.id}`, {
       nombre: zona.nombre_zona
     }, {
       headers: { Authorization: `Bearer ${token}` }
@@ -226,7 +226,7 @@ const restaurarZona = async (zona) => {
 // Eliminar zona (lógicamente)
 const eliminarZona = async (id) => {
   try {
-    await axios.delete(`https://normativa.miga.org.bo/api/zonas/${id}`, {
+    await axios.delete(`/api/zonas/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     showSnackbar('Zona eliminada exitosamente')

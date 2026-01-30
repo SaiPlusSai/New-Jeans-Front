@@ -129,7 +129,7 @@ const macros = ref([])
 const verifyUser = async () => {
   if (!token) return
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/usuarios/perfil', {
+    const res = await axios.get('/api/usuarios/perfil', {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -144,7 +144,7 @@ const loadMacros = async () => {
   error.value = ''
   loading.value = true
   try {
-    const res = await axios.get('https://normativa.miga.org.bo/api/macrodistritos', {
+    const res = await axios.get('/api/macrodistritos', {
             headers: { Authorization: `Bearer ${token}` }
         })
     macros.value = res.data
@@ -172,7 +172,7 @@ const registerMacro = async () => {
       descripcion: macro.value.descripcion
     }
 
-    const response = await axios.post('https://normativa.miga.org.bo/api/macrodistritos', newData, {
+    const response = await axios.post('/api/macrodistritos', newData, {
         headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -198,7 +198,7 @@ const updateMacro = async () => {
       nombre: macro.value.nombre,
       descripcion: macro.value.descripcion
     }
-    const response = await axios.put(`https://normativa.miga.org.bo/api/macrodistritos/${macro.value.id}`, updatedData, {
+    const response = await axios.put(`/api/macrodistritos/${macro.value.id}`, updatedData, {
                             headers: { Authorization: `Bearer ${token}` }
                         })
     
@@ -215,7 +215,7 @@ const updateMacro = async () => {
 // Elimnar macrodistrito
 const deleteMacro = async () => {
   try {
-    const response = await axios.delete(`https://normativa.miga.org.bo/api/macrodistritos/${macro.value.id}`, {
+    const response = await axios.delete(`/api/macrodistritos/${macro.value.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     showSnackbar(`${response.data.mensaje}`)

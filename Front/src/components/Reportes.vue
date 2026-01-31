@@ -45,11 +45,13 @@
                     <v-card-text>
                     <v-form> 
                         <v-select
-                        v-model="selectedTipo"
-                        :items="tipos"
-                        label="Tipo"
-                        clearable
-                        ></v-select>
+  v-model="selectedTipo"
+  :items="tipos"
+  item-title="text"
+  item-value="value"
+  label="Tipo"
+  clearable
+/>
 
                         <v-text-field
                         v-model="searchAnio"
@@ -124,7 +126,16 @@ const docs = ref([]);
 const snackbar = ref(false);
 const snackbarContent = ref('');
 const filterVisible = ref(false);
-const tipos = ref(['ley', 'decreto', 'resolucion', 'circular', 'reglamento', 'otro']);
+const tipos = ref([
+  { text: 'Ley', value: 'ley' },
+  { text: 'Decreto', value: 'decreto' },
+  { text: 'Resolución', value: 'resolucion' },
+  { text: 'Plan', value: 'plan' },
+  { text: 'Norma', value: 'norma' },
+  { text: 'Resolución Municipal', value: 'resolucion_municipal' },
+  { text: 'Otro', value: 'otro' }
+])
+
 const selectedTipo = ref(null);
 const searchAnio = ref(null);
 const inputError = ref('');
@@ -132,7 +143,6 @@ const tipoFilter = ref(false);
 const anioFilter = ref(false);
 
 const token = localStorage.getItem('token');
-console.log(token);
 
 const fetchConsultas = async () => {
   try {
@@ -167,7 +177,9 @@ const applyFilters = async () => {
     } else {
         if(selectedTipo.value != null){
             try {
-                const response = await axios.get(`/api/reportes/documentos/tipo/${selectedTipo.value}`, {
+                const response = await axios.get(
+  `/api/reportes/documentos/tipo/${selectedTipo.value}`,
+ {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -179,9 +191,11 @@ const applyFilters = async () => {
             tipoFilter.value = true;
             anioFilter.value = false;
         } else if(searchAnio.value != null) {
-            if(searchAnio.value < 2000 || searchAnio.value> 2024){
-                inputError.value = 'El año debe estar entre 2000 y 2024';
-            } else {
+            const anioActual = new Date().getFullYear();
+
+if (searchAnio.value < 1825 || searchAnio.value > anioActual) {
+  inputError.value = `El año debe estar entre 1825 y ${anioActual}`;
+} else {
                 try {
                     const response = await axios.get(`/api/reportes/documentos/anio/${searchAnio.value}`, {
                         headers: {

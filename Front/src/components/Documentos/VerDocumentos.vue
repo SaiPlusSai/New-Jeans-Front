@@ -247,7 +247,7 @@ const clearFilters = () => {
 };
 
 const token = localStorage.getItem('token');
-console.log(token);
+
 
 const fetchFavs = async () => {
   try {

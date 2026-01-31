@@ -152,7 +152,6 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://newjeans-back.onrender.com'; // Ajusta si tu backend está en otro host
 
 const propuestas = ref([])
 const cargando = ref(false)
